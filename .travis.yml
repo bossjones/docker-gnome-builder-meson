@@ -1,0 +1,8 @@
+---
+services: docker
+
+env:
+  - distro: ubuntu1604
+
+script:
+  - make travis
