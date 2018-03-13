@@ -7,12 +7,21 @@ RUN dnf -y update && \
     dnf -y install git gcc-c++ gjs gjs-devel libpeas-devel \
     gtksourceview3-devel libgit2-devel libgit2-glib-devel clang-devel file vala-devel vala llvm-devel vte-devel \
     vte291-devel vala-tools redhat-rpm-config; \
-    dnf groupinstall -y development-libs development-tools gnome-software-development libdazzle-devel json-glib-devel jsonrpc-glib-devel vte291-devel libxml2-devel desktop-file-utils webkit2gtk3-devel appstream-devel libappstream-glib libappstream-glib-devel libappstream-glib-builder-devel ctags ctags-etags devhelp-libs devhelp-devel flatpak-devel flatpak-libs flatpak-builder gspell-devel sysprof-devel autoconf automake enchant-devel; \
+    dnf groupinstall -y development-libs development-tools gnome-software-development; \
     dnf -y install ninja-build \
+    libdazzle-devel json-glib-devel jsonrpc-glib-devel vte291-devel libxml2-devel desktop-file-utils webkit2gtk3-devel appstream-devel libappstream-glib libappstream-glib-devel libappstream-glib-builder-devel ctags ctags-etags devhelp-libs devhelp-devel flatpak-devel flatpak-libs flatpak-builder gspell-devel sysprof-devel autoconf automake enchant-devel template-glib-devel \
     gcc gcc-c++ \
     gcc-gfortran gcc-objc \
     gcc-objc++ java-devel \
     mono-core mono-devel \
+    libdazzle-devel \
+    libgcc-devel \
+    libgit2-glib-devel \
+    libpeas-devel \
+    libsoup-devel \
+    libsysprof-ui \
+    libxml2-devel \
+    template-glib-devel \
     vala \
     boost-devel \
     gtest-devel \
@@ -43,15 +52,15 @@ RUN cd /usr/local/src/; \
     pip3 install virtualenv virtualenvwrapper ipython; \
     pip3 install meson
 
-# RUN cd /usr/local/src && \
-#     git clone git://git.gnome.org/gnome-builder && \
-#     cd gnome-builder && \
-#     meson --prefix=/usr build && \
-#     ninja -C build && \
-#     ninja -C build install
+RUN cd /usr/local/src && \
+    git clone git://git.gnome.org/gnome-builder && \
+    cd gnome-builder && \
+    meson --prefix=/usr build && \
+    ninja -C build && \
+    ninja -C build install
 
-# RUN useradd -m -d /home/developer developer
+RUN useradd -m -d /home/developer developer
 
-# USER developer
+USER developer
 
-# ENTRYPOINT ["/usr/bin/gnome-builder"]
+ENTRYPOINT ["/usr/bin/gnome-builder"]
