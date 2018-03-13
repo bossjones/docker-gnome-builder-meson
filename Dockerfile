@@ -32,6 +32,7 @@ RUN dnf -y update && \
     gettext \
     gnustep-base-devel \
     git-core \
+    vim \
     "pkgconfig(protobuf)" \
     "pkgconfig(glib-2.0)" \
     "pkgconfig(gobject-introspection-1.0)" \
@@ -59,7 +60,15 @@ RUN cd /usr/local/src && \
     ninja -C build && \
     ninja -C build install
 
-RUN useradd -m -d /home/developer developer
+RUN export uid=1000 gid=1000 && \
+    mkdir -p /home/developer && \
+    echo "developer:x:${uid}:${gid}:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
+    echo "developer:x:${uid}:" >> /etc/group && \
+    echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
+    chmod 0440 /etc/sudoers.d/developer && \
+    chown ${uid}:${gid} -R /home/developer
+
+# RUN useradd -m -d /home/developer developer
 
 USER developer
 

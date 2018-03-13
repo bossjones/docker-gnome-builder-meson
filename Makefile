@@ -109,7 +109,7 @@ run-bash:
 	-it \
 	-e UID \
 	-e GID \
-	-e DISPLAY \
+	-e DISPLAY=$$DISPLAY \
 	-v /tmp/.X11-unix:/tmp/.X11-unix \
 	-v /run/user/$(UID)/pulse:/run/pulse \
 	\
