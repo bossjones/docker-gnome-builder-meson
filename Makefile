@@ -2,6 +2,8 @@
 
 SHELL := $(shell which bash)
 
+DIR   := $(shell $$PWD)
+
 # export DOCKER_IP = $(shell which docker-machine > /dev/null 2>&1 && docker-machine ip $(DOCKER_MACHINE_NAME))
 
 export PATH := ./bin:./venv/bin:$(PATH)
@@ -13,10 +15,11 @@ export HOST_IP=$(shell curl ipv4.icanhazip.com 2>/dev/null)
 username := bossjones
 container_name := gnome-builder-meson
 
-GIT_BRANCH  = $(shell git rev-parse --abbrev-ref HEAD)
-GIT_SHA     = $(shell git rev-parse HEAD)
-BUILD_DATE  = $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
-VERSION  = latest
+GIT_BRANCH    = $(shell git rev-parse --abbrev-ref HEAD)
+GIT_SHA       = $(shell git rev-parse HEAD)
+BUILD_DATE    = $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+VERSION       = latest
+NON_ROOT_USER = developer
 
 LOCAL_REPOSITORY = $(HOST_IP):5000
 
@@ -100,6 +103,24 @@ down:
 	docker-compose rm -f
 
 restart: down up
+
+run-bash:
+	docker run --rm \
+	-it \
+	-e UID \
+	-e GID \
+	-e DISPLAY \
+	-v /tmp/.X11-unix:/tmp/.X11-unix \
+	-v /run/user/$$UID/pulse:/run/pulse \
+	\
+	-v $$PWD:/home/$$NON_ROOT_USER/$$DIR \
+	-v /usr/share/fonts:/usr/local/share/fonts:ro \
+	-v /usr/share/themes:/usr/local/share/themes:ro \
+	-v /usr/share/icons:/usr/local/share/icons:ro \
+	-w /home/$$NON_ROOT_USER/$$DIR \
+	\
+	$(username)/$(container_name):latest bash
+
 
 shell:
 	docker exec -ti $(username)/$(container_name):latest /bin/bash
