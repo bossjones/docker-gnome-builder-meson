@@ -33,6 +33,7 @@ RUN dnf -y update && \
     gnustep-base-devel \
     git-core \
     vim \
+    sudo \
     "pkgconfig(protobuf)" \
     "pkgconfig(glib-2.0)" \
     "pkgconfig(gobject-introspection-1.0)" \
@@ -72,4 +73,8 @@ RUN export uid=1000 gid=1000 && \
 
 USER developer
 
-ENTRYPOINT ["/usr/bin/gnome-builder"]
+COPY ./bin/entrypoint.sh /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+
+CMD ["/usr/bin/gnome-builder"]
