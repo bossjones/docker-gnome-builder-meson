@@ -179,18 +179,18 @@ RUN cd /usr/local/src && \
     ninja -C build && \
     ninja -C build install
 
-RUN export uid=1000 gid=1000 && \
-    mkdir -p /home/developer && \
-    echo "developer:x:${uid}:${gid}:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
-    echo "developer:x:${uid}:" >> /etc/group && \
-    echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
-    echo "%developer ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/developer && \
-    chmod 0440 /etc/sudoers.d/developer && \
-    chown ${uid}:${gid} -R /home/developer
+# RUN export uid=1000 gid=1000 && \
+#     mkdir -p /home/developer && \
+#     echo "developer:x:${uid}:${gid}:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
+#     echo "developer:x:${uid}:" >> /etc/group && \
+#     echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
+#     echo "%developer ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/developer && \
+#     chmod 0440 /etc/sudoers.d/developer && \
+#     chown ${uid}:${gid} -R /home/developer
 
 RUN set -xe \
-    && useradd -U -d /home/developer -m -r -G adm,sudo,dip,plugdev,tty,audio,docker developer \
-    && usermod -a -G developer -s /bin/bash -u ${HOST_USER_ID} dev \
+    && useradd -U -d /home/developer -m -r -G adm,tty,audio developer \
+    && usermod -a -G developer -s /bin/bash -u ${HOST_USER_ID} developer \
     && groupmod -g ${HOST_GROUP_ID} developer \
     && ( mkdir /home/developer/.ssh \
     && chmod og-rwx /home/developer/.ssh \
