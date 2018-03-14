@@ -209,7 +209,7 @@ USER developer
 # ENV HOME /home/developer
 # CMD dbus-daemon --system --fork && /usr/bin/firefox
 
-COPY ./bin/entrypoint.sh /entrypoint.sh
+COPY bin/entrypoint.sh /entrypoint.sh
 
 # ENTRYPOINT ["/entrypoint.sh"]
 
@@ -227,11 +227,14 @@ COPY ./bin/entrypoint.sh /entrypoint.sh
 #     dnf -y install firefox \
 #     xorg-x11-twm \
 #     tigervnc-server \
-#     xterm xulrunner \
+#     xterm \
 #     dejavu-sans-fonts  \
 #     dejavu-serif-fonts \
 #     xdotool && \
 #     dnf clean all
+
+# xdotool: fake keyboard/mouse input, window management, and more
+# twm: twm (Tab Window Manager) is a window manager for the X Window System.
 
 # # Add the xstartup file into the image and set the default password.
 # RUN mkdir /root/.vnc
