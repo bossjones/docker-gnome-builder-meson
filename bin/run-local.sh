@@ -5,8 +5,8 @@ DIR=$(basename $PWD)
 
 export NON_ROOT_USER="developer"
 
-UID=$(id -u)
-GID=$(id -g)
+export UID=$(id -u)
+export GID=$(id -g)
 
 docker run \
 	-e UID \
