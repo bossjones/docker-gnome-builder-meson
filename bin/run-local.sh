@@ -5,12 +5,15 @@ DIR=$(basename $PWD)
 
 export NON_ROOT_USER="developer"
 
+UID=$(id -u)
+GID=$(id -g)
+
 docker run \
 	-e UID \
 	-e GID \
 	-e DISPLAY \
 	-v /tmp/.X11-unix:/tmp/.X11-unix \
-	-v /run/user/${UID:-1000}/pulse:/run/pulse \
+	-v /run/user/$UID/pulse:/run/pulse \
 	\
     -v $PWD:/home/$NON_ROOT_USER/$DIR \
 	-v /usr/share/fonts:/usr/local/share/fonts:ro \
