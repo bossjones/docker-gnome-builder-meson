@@ -220,7 +220,7 @@ RUN cd /usr/local/src && \
     ninja -C build install
 
 
-COPY bin/entrypoint.sh /entrypoint.sh
+# COPY bin/entrypoint.sh /entrypoint.sh
 
 # RUN export uid=1000 gid=1000 && \
 #     mkdir -p /home/developer && \
