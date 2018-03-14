@@ -18,3 +18,69 @@ After (re-) starting rygel, it should start requesting thumbnail generation
 for files that don't have thumbnails. If you don't see them in your client
 right away, you might have to refresh the view.
 ```
+
+# Future usage
+
+```
+dnf -y reinstall "*" \
+    dnf -y remove vim-minimal && \
+    dnf -y install \
+           abrt \
+           bash-completion \
+           bc \
+           blktrace \
+           btrfs-progs \
+           crash \
+           dnf-plugins-core \
+           docker \
+           docker-selinux \
+           e2fsprogs \
+           ethtool \
+           file \
+           findutils \
+           fpaste \
+           gcc \
+           gdb \
+           gdb-gdbserver \
+           git \
+           glibc-common \
+           glibc-utils \
+           hwloc \
+           iotop \
+           iproute \
+           iputils \
+           kernel \
+           less \
+           ltrace \
+           mailx \
+           man-db \
+           nc \
+           netsniff-ng \
+           net-tools \
+           numactl \
+           numactl-devel \
+           ostree \
+           passwd \
+           pciutils \
+           pcp \
+           perf \
+           procps-ng \
+           psmisc \
+           python-dnf-plugins-extras* \
+           python-docker-py \
+           python-rhsm \
+           rootfiles \
+           rpm-ostree \
+           screen \
+           sos \
+           strace \
+           subscription-manager \
+           sysstat \
+           systemtap \
+           systemtap-client \
+           tar \
+           tcpdump \
+           vim-enhanced \
+           which \
+           xauth
+```

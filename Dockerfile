@@ -8,13 +8,14 @@ RUN dnf -y update && \
     gtksourceview3-devel libgit2-devel libgit2-glib-devel clang-devel file vala-devel vala llvm-devel vte-devel \
     vte291-devel vala-tools redhat-rpm-config; \
     dnf groupinstall -y development-libs development-tools gnome-software-development; \
-    dnf -y install ninja-build \
+    dnf clean all
+
+RUN dnf -y install ninja-build \
     libdazzle-devel json-glib-devel jsonrpc-glib-devel vte291-devel libxml2-devel desktop-file-utils webkit2gtk3-devel appstream-devel libappstream-glib libappstream-glib-devel libappstream-glib-builder-devel ctags ctags-etags devhelp-libs devhelp-devel flatpak-devel flatpak-libs flatpak-builder gspell-devel sysprof-devel autoconf automake enchant-devel template-glib-devel \
     gcc gcc-c++ \
     gcc-gfortran gcc-objc \
     gcc-objc++ java-devel \
     mono-core mono-devel \
-    libdazzle-devel \
     libgcc-devel \
     libgit2-glib-devel \
     libpeas-devel \
@@ -77,6 +78,6 @@ USER developer
 
 COPY ./bin/entrypoint.sh /entrypoint.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+# ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["/usr/bin/gnome-builder"]
+# CMD ["/usr/bin/gnome-builder"]
