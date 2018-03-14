@@ -158,6 +158,46 @@ RUN dnf -y install ninja-build \
     "pkgconfig(zlib)"; \
     dnf clean all
 
+# SOURCE: https://github.com/alexlarsson/broadway-docker/blob/391325140d8bfeda36d48d51b325b6ad8e689223/build/Dockerfile
+RUN dnf install -y \
+        yum-utils \
+        rpm-build \
+        pixman-devel \
+        libpng-devel \
+        libxml2-devel \
+        freetype-devel \
+        fontconfig-devel \
+        gtk-doc \
+        gnome-common \
+        intltool \
+        libjpeg-devel \
+        libtiff-devel \
+        hicolor-icon-theme \
+        abattis-cantarell-fonts \
+        liberation-mono-fonts \
+        liberation-sans-fonts \
+        liberation-serif-fonts \
+        python-mako \
+        ncurses-devel \
+        icon-naming-utils \
+        dbus-devel \
+        desktop-file-utils \
+        libuuid-devel \
+        appdata-tools \
+        iso-codes-devel \
+        mozjs24-devel \
+        readline-devel \
+        dbus-glib-devel \
+        gcc-c++ \
+        createrepo \
+        lighttpd \
+        gnome-doc-utils \
+        vala-devel \
+        vala-tools \
+        libxslt-devel \
+        fuse-devel \
+        libarchive-devel \
+        libcroco-devel
 
 # pip3 install -I path.py==7.7.1; \
 RUN cd /usr/local/src/; \
@@ -178,6 +218,9 @@ RUN cd /usr/local/src && \
     meson --prefix=/usr build && \
     ninja -C build && \
     ninja -C build install
+
+
+COPY bin/entrypoint.sh /entrypoint.sh
 
 # RUN export uid=1000 gid=1000 && \
 #     mkdir -p /home/developer && \
@@ -209,7 +252,7 @@ USER developer
 # ENV HOME /home/developer
 # CMD dbus-daemon --system --fork && /usr/bin/firefox
 
-COPY bin/entrypoint.sh /entrypoint.sh
+
 
 # ENTRYPOINT ["/entrypoint.sh"]
 
