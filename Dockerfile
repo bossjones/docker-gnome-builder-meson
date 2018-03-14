@@ -67,7 +67,7 @@ RUN dnf -y install ninja-build \
     gcc-gfortran gcc-objc \
     gcc-objc++ java-devel \
     mono-core mono-devel \
-    libgcc-devel \
+    libgcc \
     libgit2-glib-devel \
     libpeas-devel \
     libsoup-devel \
