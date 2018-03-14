@@ -132,3 +132,12 @@ From the host that is running the container -
 ```
 
 That's it.
+
+
+# Test project to try out?
+
+**SOURCE:https://fedoramagazine.org/debugging-gnome-builder/**
+
+https://pagure.io/fedora-magazine/stop-watch.git
+
+git@github.com:GNOME/gnome-music.git
