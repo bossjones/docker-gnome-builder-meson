@@ -33,17 +33,49 @@ ENV HOST_GROUP_ID ${HOST_GROUP_ID}
 ENV TERM xterm-256color
 
 RUN dnf -y update && \
+    \
     dnf group install "C Development Tools and Libraries" -y; \
-    dnf install -y wget curl vim \
-    glibc-langpack-en.x86_64 \
-    redhat-rpm-config htop perf \
-    net-tools file atop ltrace bridge-utils \
-    ca-certificates iftop iperf iproute bash \
-    bash-completion gettext ncurses; \
-    dnf -y install git gcc-c++ gjs gjs-devel libpeas-devel \
-    gtksourceview3-devel libgit2-devel libgit2-glib-devel clang-devel file vala-devel vala llvm-devel vte-devel \
-    vte291-devel vala-tools redhat-rpm-config; \
-    dnf groupinstall -y development-libs development-tools gnome-software-development; \
+    dnf install -y \
+        wget \
+        curl \
+        vim \
+        glibc-langpack-en.x86_64 \
+        redhat-rpm-config \
+        htop \
+        perf \
+        net-tools \
+        file \
+        atop \
+        ltrace \
+        bridge-utils \
+        ca-certificates \
+        iftop \
+        iperf \
+        iproute \
+        bash \
+        bash-completion \
+        gettext \
+        ncurses; \
+    dnf install -y git \
+        gcc-c++ \
+        gjs \
+        gjs-devel \
+        libpeas-devel \
+        gtksourceview3-devel \
+        libgit2-devel \
+        libgit2-glib-devel \
+        clang-devel \
+        file \
+        vala-devel \
+        vala \
+        llvm-devel \
+        vte-devel \
+        vte291-devel \
+        vala-tools \
+        redhat-rpm-config; \
+    dnf groupinstall -y development-libs \
+                        development-tools \
+                        gnome-software-development; \
     dnf clean all
 
 # # Install all useful packages
@@ -62,39 +94,64 @@ RUN dnf -y update && \
 #     dnf-plugins-core \
 
 RUN dnf -y install ninja-build \
-    libdazzle-devel json-glib-devel jsonrpc-glib-devel vte291-devel libxml2-devel desktop-file-utils webkit2gtk3-devel appstream-devel libappstream-glib libappstream-glib-devel libappstream-glib-builder-devel ctags ctags-etags devhelp-libs devhelp-devel flatpak-devel flatpak-libs flatpak-builder gspell-devel sysprof-devel autoconf automake enchant-devel template-glib-devel \
-    gcc gcc-c++ \
-    gcc-gfortran gcc-objc \
-    gcc-objc++ java-devel \
-    mono-core mono-devel \
+    appstream-devel \
+    autoconf \
+    automake \
+    boost-devel \
+    ctags \
+    ctags-etags \
+    dbus-devel \
+    dbus-x11 \
+    desktop-file-utils \
+    devhelp-devel \
+    devhelp-libs \
+    enchant-devel \
+    file \
+    findutils \
+    flatpak-builder \
+    flatpak-devel \
+    flatpak-libs \
+    flex bison \
+    fpaste \
+    gcc \
+    gcc-c++ \
+    gcc-gfortran \
+    gcc-objc \
+    gcc-objc++ \
+    gdb \
+    gdb-gdbserver \
+    gettext \
+    git-core \
+    gmock-devel \
+    gnustep-base-devel \
+    gspell-devel \
+    gtest-devel \
+    java-devel \
+    json-glib-devel \
+    jsonrpc-glib-devel \
+    libappstream-glib \
+    libappstream-glib-builder-devel \
+    libappstream-glib-devel \
+    libdazzle-devel \
     libgcc \
     libgit2-glib-devel \
     libpeas-devel \
     libsoup-devel \
     libsysprof-ui \
     libxml2-devel \
-    template-glib-devel \
-    vala \
-    boost-devel \
-    gtest-devel \
-    gmock-devel \
-    qt5-qtbase-devel \
-    wxGTK3-devel \
-    flex bison \
-    gettext \
-    gnustep-base-devel \
-    git-core \
-    vim \
-    sudo \
-    dbus-x11 \
-    dbus-devel \
-    gdb \
-    gdb-gdbserver \
-    file \
-    findutils \
-    fpaste \
+    mono-core \
+    mono-devel \
     procps-ng \
     psmisc \
+    qt5-qtbase-devel \
+    sudo \
+    sysprof-devel \
+    template-glib-devel \
+    vala \
+    vim \
+    vte291-devel \
+    webkit2gtk3-devel \
+    wxGTK3-devel \
     "pkgconfig(protobuf)" \
     "pkgconfig(glib-2.0)" \
     "pkgconfig(gobject-introspection-1.0)" \
@@ -102,6 +159,7 @@ RUN dnf -y install ninja-build \
     dnf clean all
 
 
+# pip3 install -I path.py==7.7.1; \
 RUN cd /usr/local/src/; \
     curl -s -q -L 'https://bootstrap.pypa.io/ez_setup.py' > ez_setup.py; \
     curl -s -q -L 'https://bootstrap.pypa.io/get-pip.py' > get-pip.py; \
@@ -111,7 +169,6 @@ RUN cd /usr/local/src/; \
     cd /usr/local/src/; \
     python3 ez_setup.py; \
     python3 get-pip.py; \
-    pip3 install -I path.py==7.7.1; \
     pip3 install virtualenv virtualenvwrapper ipython; \
     pip3 install meson
 
