@@ -34,6 +34,8 @@ RUN dnf -y update && \
     git-core \
     vim \
     sudo \
+    dbus-x11 \
+    dbus-devel \
     "pkgconfig(protobuf)" \
     "pkgconfig(glib-2.0)" \
     "pkgconfig(gobject-introspection-1.0)" \
