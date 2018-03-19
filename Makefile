@@ -2,7 +2,7 @@
 
 SHELL := $(shell which bash)
 
-DIR   := $(shell $$PWD)
+DIR   := $(shell basename $$PWD)
 
 # export DOCKER_IP = $(shell which docker-machine > /dev/null 2>&1 && docker-machine ip $(DOCKER_MACHINE_NAME))
 
@@ -129,3 +129,19 @@ tail:
 	docker logs -f $(container_name)
 
 travis: build
+
+
+# https://cntnr.io/running-guis-with-docker-on-mac-os-x-a14df6a76efc
+setup-socat:
+	setup-socat
+
+run-gnome-builder: xstart
+	docker-run-bash
+
+run-xquartz-proxy:
+	xstart
+
+xquartz-proxy: run-xquartz-proxy
+
+xstart:
+	xstart

@@ -141,3 +141,6 @@ That's it.
 https://pagure.io/fedora-magazine/stop-watch.git
 
 git@github.com:GNOME/gnome-music.git
+
+# Docker X11 Client Via SSH
+https://dzone.com/articles/docker-x11-client-via-ssh
