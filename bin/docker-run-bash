@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# NOTE: xstart needs to run before this!!
+
+export _HOST_IP=$(ifconfig en0 | grep "inet "| awk '{print $2}')
+
+# DISPLAY=${_HOST_IP}:0
+
+username=bossjones
+container_name=gnome-builder-meson
+NON_ROOT_USER=developer
+DIR=$(basename $PWD)
+export DISPLAY_MAC=`ifconfig en0 | grep "inet " | cut -d " " -f2`:0
+
+docker run --rm \
+    --privileged \
+	-it \
+	--net host \
+	-e UID \
+	-e GID \
+	-e DISPLAY=${DISPLAY_MAC} \
+	-e XAUTHORITY=/tmp/xauth \
+	-v ~/.Xauthority:/tmp/xauth \
+	-v /tmp/.X11-unix:/tmp/.X11-unix \
+	-v /run/user/${UID}/pulse:/run/pulse \
+	\
+	-v $PWD:/home/$NON_ROOT_USER/$DIR \
+	-v /usr/share/fonts:/usr/local/share/fonts:ro \
+	-v /usr/share/themes:/usr/local/share/themes:ro \
+	-v /usr/share/icons:/usr/local/share/icons:ro \
+	-w /home/$NON_ROOT_USER/$DIR \
+	\
+	$username/$container_name:latest bash

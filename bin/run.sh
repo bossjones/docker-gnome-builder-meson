@@ -2,6 +2,10 @@
 set -e
 
 DIR=$(basename $PWD)
+IP=$(ifconfig en0 | grep inet | awk '$1=="inet" {print $2}')
+
+# xhost is a program that controls access for X server. You can use xhost to limit access for X server for security reasons. The following message is what you get when connection is rejected by xhost:
+xhost + $IP
 
 docker run \
 	-e UID \

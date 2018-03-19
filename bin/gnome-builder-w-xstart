@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -e
+
+# SOURCE: https://hub.docker.com/r/kayvan/scidvspc/
+
+__my_ip=$(ifconfig|grep 'inet '|grep -v '127.0.0.1'| \
+            head -1|awk '{print $2}')
+__scid_home_dir=~/docker/scid_home # pick a place for the .scidvspc dir
+
+scid() {
+  killall -0 quartz-wm > /dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    echo "ERROR: Quartz is not running. Start Quartz and try again."
+  else
+    socat TCP-LISTEN:6001,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
+    SOCAT_SCID_PID=$!
+    docker run --rm -e HOME=$__scid_home_dir \
+      -e XAUTHORITY=/tmp/xauth -v ~/.Xauthority:/tmp/xauth \
+      -e DISPLAY=$__my_ip:1 --net host -v $HOME:$HOME kayvan/scidvspc
+    kill $SOCAT_SCID_PID
+  fi
+}

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+export _HOST_IP=$(ifconfig en0 | grep "inet "| awk '{print $2}')
+
+DISPLAY=${_HOST_IP}:0
+
+# NOTE: 6000 is x11 port
+
+socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &

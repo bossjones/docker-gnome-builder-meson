@@ -36,8 +36,8 @@ then
 fi
 
 dbus=($(dbus-daemon --fork --session --print-address 1 --print-pid 1))
-echo DBUS_SESSION_BUS_ADDRESS="'${dbus[0]}'" > $HOME/.dbusrc
-echo export DBUS_SESSION_BUS_ADDRESS >> $HOME/.dbusrc
-echo DBUS_SESSION_BUS_PID=${dbus[1]} >> $HOME/.dbusrc
+echo "DBUS_SESSION_BUS_ADDRESS=\"'${dbus[0]}'\"" > $HOME/.dbusrc
+echo 'export DBUS_SESSION_BUS_ADDRESS' >> $HOME/.dbusrc
+echo "DBUS_SESSION_BUS_PID=${dbus[1]}" >> $HOME/.dbusrc
 . $HOME/.dbusrc
 exec $command $*
