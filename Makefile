@@ -14,6 +14,7 @@ export HOST_IP=$(shell curl ipv4.icanhazip.com 2>/dev/null)
 
 username := bossjones
 container_name := gnome-builder-meson
+docker_developer_chroot := .docker-developer
 
 GIT_BRANCH    = $(shell git rev-parse --abbrev-ref HEAD)
 GIT_SHA       = $(shell git rev-parse HEAD)
@@ -145,3 +146,6 @@ xquartz-proxy: run-xquartz-proxy
 
 xstart:
 	xstart
+
+mkdirs:
+	mkdir -p $$HOME/$(docker_developer_chroot)

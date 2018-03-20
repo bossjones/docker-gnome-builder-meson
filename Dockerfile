@@ -197,7 +197,38 @@ RUN dnf install -y \
         libxslt-devel \
         fuse-devel \
         libarchive-devel \
-        libcroco-devel
+        libcroco-devel \
+        libpeas-loader-python3.x86_64 \
+        python3-lxml \
+        python3-jedi.noarch \
+        python2-jedi \
+        vim-jedi
+
+# SOURCE: https://bugzilla.redhat.com/show_bug.cgi?id=1259643
+# Warning: python3-lxml is not installed, no documentation will be available in Python auto-completion
+# jedi not found, python auto-completion not possible.
+
+# RUN apt-get update && apt-get install -y \
+#     apt-transport-https \
+#     ca-certificates \
+#     curl \
+#     gconf2 \
+#     gconf-service \
+#     gvfs-bin \
+#     hunspell-en-us \
+#     libasound2 \
+#     libgtk2.0-0 \
+#     libnotify4 \
+#     libnss3 \
+#     libxss1 \
+#     libxtst6 \
+#     locales \
+#     python \
+#     xdg-utils \
+#     libgnome-keyring0 \
+#     gir1.2-gnomekeyring-1.0 \
+#     libappindicator1 \
+#     --no-install-recommends
 
 # pip3 install -I path.py==7.7.1; \
 RUN cd /usr/local/src/; \
@@ -215,6 +246,7 @@ RUN cd /usr/local/src/; \
 RUN cd /usr/local/src && \
     git clone git://git.gnome.org/gnome-builder && \
     cd gnome-builder && \
+    git checkout 3.28.0 && \
     meson --prefix=/usr build && \
     ninja -C build && \
     ninja -C build install
@@ -245,6 +277,8 @@ RUN set -xe \
     && echo 'developer:developer' | chpasswd
 
 # RUN useradd -m -d /home/developer developer
+
+RUN mkdir /var/run/dbus
 
 USER developer
 

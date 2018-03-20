@@ -31,8 +31,11 @@ fi
 
 export G_DEBUG=fatal_criticals
 
+flatpak run --share=network --command=bash \
+org.gnome.Builder -c "DISPLAY=$DISPLAY gnome-builder"
+
 # kill the existing daemon
-gnome-screensaver-command --exit
+# gnome-screensaver-command --exit
 
 # run the daemon in the debugger
 #gdb --args gnome-screensaver --no-daemon --debug --sync
@@ -41,4 +44,4 @@ gnome-screensaver-command --exit
 #gnome-screensaver --no-daemon --debug > /tmp/gs-debug-log.txt 2>&1
 
 # or just run it with debugging on
-gnome-screensaver --no-daemon --debug
+# gnome-screensaver --no-daemon --debug

@@ -144,3 +144,15 @@ git@github.com:GNOME/gnome-music.git
 
 # Docker X11 Client Via SSH
 https://dzone.com/articles/docker-x11-client-via-ssh
+
+
+# Things to try
+
+```
+sudo dbus-daemon --system --fork
+
+[developer@dev-experimental docker-gnome-builder-meson]$ dbus-launch
+DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-i1mFh6aILo,guid=c3b5c8beeb4a03267623fa0c5ab02d79
+DBUS_SESSION_BUS_PID=198
+DBUS_SESSION_BUS_WINDOWID=10485761
+```

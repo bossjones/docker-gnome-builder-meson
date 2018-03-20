@@ -21,23 +21,32 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+set -x
+
+username=bossjones
+container_name=gnome-builder-meson
+NON_ROOT_USER=developer
+DIR=$(basename $PWD)
+export DISPLAY_MAC=`ifconfig en0 | grep "inet " | cut -d " " -f2`:0
+
 [ -z $1 ] && exit 127
 
 command=$(shift 1)
 
-pid=$(grep DBUS_SESSION_BUS_PID $HOME/.dbusrc | cut -f2 -d= | sed -e 's,;,,')
+pid=$(grep DBUS_SESSION_BUS_PID /home/${NON_ROOT_USER}/docker-gnome-builder-meson/.dbusrc | cut -f2 -d= | sed -e 's,;,,')
 cmdline="/proc/$pid/cmdline"
 if [ -e $cmdline ]
 then
     if grep -q "dbus-daemon" $cmdline; then
-        . $HOME/.dbusrc
+        . /home/${NON_ROOT_USER}/docker-gnome-builder-meson/.dbusrc
         exec $command $*
     fi
 fi
 
 dbus=($(dbus-daemon --fork --session --print-address 1 --print-pid 1))
-echo "DBUS_SESSION_BUS_ADDRESS=\"'${dbus[0]}'\"" > $HOME/.dbusrc
-echo 'export DBUS_SESSION_BUS_ADDRESS' >> $HOME/.dbusrc
-echo "DBUS_SESSION_BUS_PID=${dbus[1]}" >> $HOME/.dbusrc
-. $HOME/.dbusrc
+echo "DBUS_SESSION_BUS_ADDRESS=\"'${dbus[0]}'\"" > /home/${NON_ROOT_USER}/docker-gnome-builder-meson/.dbusrc
+echo 'export DBUS_SESSION_BUS_ADDRESS' >> /home/${NON_ROOT_USER}/docker-gnome-builder-meson/.dbusrc
+echo "DBUS_SESSION_BUS_PID=${dbus[1]}" >> /home/${NON_ROOT_USER}/docker-gnome-builder-meson/.dbusrc
+. /home/${NON_ROOT_USER}/docker-gnome-builder-meson/.dbusrc
 exec $command $*
+
