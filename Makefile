@@ -152,3 +152,6 @@ mkdirs:
 
 run-dev:
 	dev-entrypoint.sh
+
+run-tmux:
+	tmux-entrypoint.sh
