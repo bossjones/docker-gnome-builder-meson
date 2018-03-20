@@ -48,7 +48,21 @@ ENV TERM xterm-256color
 
 # INFO: Pyenv requirements
 RUN dnf -y update && \
-    dnf install -y zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel
+        dnf -y reinstall "*" \
+        dnf -y remove vim-minimal && \
+        dnf -y install \
+        abrt \
+        bash-completion \
+        bc \
+        blktrace \
+        btrfs-progs \
+        crash \
+        dnf-plugins-core && \
+    dnf install -y gcc zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel && \
+    dnf install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel && \
+    dnf install -y zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel && \
+    dnf install -y @development-tools && \
+    dnf reinstall -y glibc-devel.x86_64
 
 RUN dnf -y update && \
     \
