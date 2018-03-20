@@ -46,8 +46,13 @@ ENV HOST_GROUP_ID ${HOST_GROUP_ID}
 # Sets term to xterm-256color - needed for proper coloring in tmux.
 ENV TERM xterm-256color
 
+# INFO: Pyenv requirements
+RUN dnf -y update && \
+    dnf install -y zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel
+
 RUN dnf -y update && \
     \
+    dnf install python3-devel python3-pyOpenSSL.noarch python2-pyOpenSSL.noarch -y; \
     dnf group install "C Development Tools and Libraries" -y; \
     dnf install -y \
         wget \
@@ -214,7 +219,6 @@ RUN cd /usr/local/src/; \
     curl -s -q -L 'https://bootstrap.pypa.io/get-pip.py' > get-pip.py; \
     python ez_setup.py; \
     python get-pip.py; \
-    dnf install python3-devel python3-pyOpenSSL.noarch python2-pyOpenSSL.noarch -y; \
     cd /usr/local/src/; \
     python3 ez_setup.py; \
     python3 get-pip.py; \
@@ -247,9 +251,6 @@ RUN set -xe \
 RUN flatpak install -y --from https://flathub.org/repo/appstream/org.gnome.Builder.flatpakref
 
 RUN mkdir /var/run/dbus
-
-# INFO: Pyenv requirements
-RUN dnf install -y zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel
 
 USER developer
 
