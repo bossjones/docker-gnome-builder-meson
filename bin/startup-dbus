@@ -5,7 +5,8 @@ set -x
 sudo mkdir /var/run/dbus
 sudo dbus-daemon --system --fork
 
-_DBUS_LAUNCH_OUTPUT=($(dbus-launch))
+# SOURCE: https://stackoverflow.com/questions/41242460/how-to-export-dbus-session-bus-address
+export $(dbus-launch)
 
 # eval _DBUS_LAUNCH_OUTPUT=$(dbus-launch)
 
