@@ -12,7 +12,7 @@ export _UID=$(id -u)
 export _GID=$(id -g)
 export DOCKER_DEVELOPER_CHROOT=".docker-${NON_ROOT_USER}-chroot"
 export DOCKER_DEVELOPER_CHROOT_FULL_PATH=${HOME}/${DOCKER_DEVELOPER_CHROOT}
-export _HOST_IP=$(ifconfig|grep 'inet '|grep -v '127.0.0.1'| \             head -1|awk '{print $2}')
+export _HOST_IP=$(ifconfig|grep 'inet '|grep -v '127.0.0.1'| head -1|awk '{print $2}')
 export USERNAME=bossjones
 export CONTAINER_NAME=gnome-builder-meson
 export DISPLAY_MAC=$_HOST_IP:0
@@ -50,7 +50,7 @@ else
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v ~/.Xauthority:/tmp/xauth \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
-  -v DOCKER_DEVELOPER_CHROOT_FULL_PATH:$HOME \
+  -v DOCKER_DEVELOPER_CHROOT_FULL_PATH:${NON_ROOT_USER_HOME_DIR} \
   -v /run/user/${UID}/pulse:/run/pulse \
   \
   -v $PWD:/home/$NON_ROOT_USER/$DIR \
