@@ -319,7 +319,7 @@ RUN git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-buil
 # # Install vim-plug
 # RUN curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-ENV DOTFILE_VERSION master
+ENV DOTFILE_VERSION feature-font-username
 RUN git clone https://github.com/bossjones/linux-dotfiles.git /home/${NON_ROOT_USER}/.dotfiles; cd /home/${NON_ROOT_USER}/.dotfiles/; git checkout ${DOTFILE_VERSION}
 
 RUN mkdir /home/${NON_ROOT_USER}/dev; git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git /home/${NON_ROOT_USER}/dev/nerd-fonts
