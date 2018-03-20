@@ -266,7 +266,36 @@ RUN flatpak install -y --from https://flathub.org/repo/appstream/org.gnome.Build
 RUN mkdir /var/run/dbus && \
     chown developer:developer -Rv /home/developer
 
+# nvm environment variables
+ENV NVM_DIR /usr/local/nvm
+ENV NODE_VERSION 8.5.0
+
+# install nvm
+# SOURCE: https://gist.github.com/remarkablemark/aacf14c29b3f01d6900d13137b21db3a
+# https://github.com/creationix/nvm#install-script
+RUN curl --silent -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+
+# install node and npm
+RUN source $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default
+
+# add node and npm to path so the commands are available
+ENV NODE_PATH $NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+# confirm installation
+RUN node -v
+RUN npm -v
+
+RUN chown ${NON_ROOT_USER}:${NON_ROOT_USER} -R /usr/local/nvm
+
 USER developer
+
+# https://github.com/pyenv/pyenv/issues/950
+# SOURCE: https://github.com/pyenv/pyenv/issues/950#issuecomment-348373683
+RUN sudo dnf remove openssl-devel -y && dnf install compat-openssl10-devel -y
 
 ####################################
 ENV LANG C.UTF-8
@@ -274,48 +303,42 @@ ENV LANG C.UTF-8
 ENV PYENV_ROOT /home/${NON_ROOT_USER}/.pyenv
 ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 
+RUN mkdir -p ~/.local/share/fonts
 RUN curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
-
-# RUN CFLAGS=-I/usr/include/openssl \
-#     LDFLAGS=-L/usr/lib64 \
-#     pyenv install 3.5.2
+RUN pyenv install 3.5.2
 
 # ########################[EDITOR RELATED SETUP STUFF]################################
 
 # # Install rbenv to manage ruby versions
-# RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv
-# RUN cd ~/.rbenv && src/configure && make -C src
-# RUN echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-# RUN echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-# RUN git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+RUN cd ~/.rbenv && src/configure && make -C src
+RUN echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+RUN echo 'eval "$(rbenv init -)"' >> ~/.bashrc
+RUN git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
 
 # # Install vim-plug
 # RUN curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-# # Install dotfiles
-# # ENV DOTFILE_VERSION 0.0.2
-# # RUN git clone https://github.com/tyrbo/dotfiles.git --branch $DOTFILE_VERSION --depth 1 ~/.config/dotfiles
-# ENV DOTFILE_VERSION master
-# RUN git clone https://github.com/bossjones/linux-dotfiles.git /home/${NON_ROOT_USER}/.dotfiles; cd /home/${NON_ROOT_USER}/.dotfiles/; git checkout ${DOTFILE_VERSION}
+ENV DOTFILE_VERSION master
+RUN git clone https://github.com/bossjones/linux-dotfiles.git /home/${NON_ROOT_USER}/.dotfiles; cd /home/${NON_ROOT_USER}/.dotfiles/; git checkout ${DOTFILE_VERSION}
 
-# RUN mkdir /home/${NON_ROOT_USER}/dev; git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git /home/${NON_ROOT_USER}/dev/nerd-fonts
+RUN mkdir /home/${NON_ROOT_USER}/dev; git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git /home/${NON_ROOT_USER}/dev/nerd-fonts
 
 # # RUN bash -c "source /home/${NON_ROOT_USER}/.dotfiles/install.sh"
 
 # # FIXME: Enable this!!!!!!!!
-# # RUN pip3 install --upgrade pip && \
-# # pip3 install --user neovim jedi mistune psutil setproctitle
-# # pip install gitpython ptpython ipython
+# RUN pip3 install --upgrade pip && \
+# pip3 install --user neovim jedi mistune psutil setproctitle
+# pip install gitpython ptpython ipython
 
-
-# # ENV NODE_VERSION 6.9.1
-# ENV RUBY_VERSION 2.4.2
+ENV NODE_VERSION 6.9.1
+ENV RUBY_VERSION 2.4.2
 
 # # NOTE: https://github.com/jarolrod/vim-python-ide
-# RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/jarolrod/vim-python-ide/master/setup.sh)" && \
-#     git clone https://github.com/chriskempson/base16-shell.git /home/${NON_ROOT_USER}/.config/base16-shell
-# RUN echo 'BASE16_SHELL=$HOME/.config/base16-shell/' >> ~/.bashrc
-# RUN echo '[ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"'  >> ~/.bashrc
+RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/jarolrod/vim-python-ide/master/setup.sh)" && \
+    git clone https://github.com/chriskempson/base16-shell.git /home/${NON_ROOT_USER}/.config/base16-shell
+RUN echo 'BASE16_SHELL=$HOME/.config/base16-shell/' >> ~/.bashrc
+RUN echo '[ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"'  >> ~/.bashrc
 
 # # FIXME: Add this to your vimrc file
 # # if filereadable(expand("~/.vimrc_background"))
@@ -327,23 +350,25 @@ RUN curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/p
 # # vundle
 # RUN bash -c "nvim +PluginInstall +qall"
 
-# RUN echo 'eval "$(pyenv init -)"' >> ~/.bashrc
-# RUN echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
-# # SOURCE: https://github.com/pyenv/pyenv-virtualenvwrapper
-# RUN echo 'export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"' >> ~/.bashrc
+RUN echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+RUN echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
+# SOURCE: https://github.com/pyenv/pyenv-virtualenvwrapper
+RUN echo 'export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"' >> ~/.bashrc
 
 # # Setup virtualenvwrapper overall
-# RUN . /home/${NON_ROOT_USER}/.bashrc; pyenv global 3.5.2; pyenv virtualenvwrapper
+RUN set -x; . /home/$NON_ROOT_USER/.bashrc; pyenv global 3.5.2; pyenv virtualenvwrapper; pip3 install --upgrade pip && \
+    pip install --user neovim jedi mistune psutil setproctitle && \
+    pip install gitpython ptpython ipython
 
 # # FIXME: bashrc is not being sourced, .profile is!! Fix this!
 
 # # RUN npm install -g neovim && \
 # #     gem install neovim
 
-# RUN mkdir -p ~/.local/share/fonts/ && \
-#     git clone git://github.com/powerline/fonts.git ~/.config/powerline/fonts && \
-#     bash ~/.config/powerline/fonts/install.sh && \
-#     pip install --user powerline-status powerline-gitstatus==1.2.1
+RUN mkdir -p ~/.local/share/fonts/ && \
+    git clone git://github.com/powerline/fonts.git ~/.config/powerline/fonts && \
+    bash ~/.config/powerline/fonts/install.sh && \
+    pip install --user powerline-status powerline-gitstatus==1.2.1
 # ####################################
 
 
