@@ -337,6 +337,8 @@ RUN mkdir /home/${NON_ROOT_USER}/dev;
 ENV NODE_VERSION 6.9.1
 ENV RUBY_VERSION 2.4.2
 
+RUN bash -c "rbenv install $RUBY_VERSION"
+
 # # NOTE: https://github.com/jarolrod/vim-python-ide
 # FIXME: Eanble this back again
 # RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/jarolrod/vim-python-ide/master/setup.sh)" && \
