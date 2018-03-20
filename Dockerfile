@@ -59,7 +59,6 @@ RUN dnf -y update && \
         crash \
         dnf-plugins-core && \
     dnf install -y gcc zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel && \
-    dnf install zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel && \
     dnf install -y zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel && \
     dnf install -y @development-tools && \
     dnf reinstall -y glibc-devel.x86_64
