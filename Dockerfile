@@ -305,8 +305,7 @@ ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 
 RUN mkdir -p ~/.local/share/fonts
 RUN curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
-RUN pyenv install 3.5.2 && \
-    pyenv install 2.7.14
+RUN pyenv install 3.5.2
 
 # ########################[EDITOR RELATED SETUP STUFF]################################
 
