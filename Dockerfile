@@ -248,6 +248,9 @@ RUN flatpak install -y --from https://flathub.org/repo/appstream/org.gnome.Build
 
 RUN mkdir /var/run/dbus
 
+# INFO: Pyenv requirements
+RUN dnf install -y zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel
+
 USER developer
 
 ####################################
