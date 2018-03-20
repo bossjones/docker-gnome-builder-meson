@@ -214,7 +214,7 @@ RUN cd /usr/local/src/; \
     curl -s -q -L 'https://bootstrap.pypa.io/get-pip.py' > get-pip.py; \
     python ez_setup.py; \
     python get-pip.py; \
-    dnf install python3-devel -y; \
+    dnf install python3-devel python3-pyOpenSSL.noarch python2-pyOpenSSL.noarch -y; \
     cd /usr/local/src/; \
     python3 ez_setup.py; \
     python3 get-pip.py; \
