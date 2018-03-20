@@ -322,7 +322,9 @@ RUN git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-buil
 ENV DOTFILE_VERSION feature-font-username
 RUN git clone https://github.com/bossjones/linux-dotfiles.git /home/${NON_ROOT_USER}/.dotfiles; cd /home/${NON_ROOT_USER}/.dotfiles/; git checkout ${DOTFILE_VERSION}
 
-RUN mkdir /home/${NON_ROOT_USER}/dev; git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git /home/${NON_ROOT_USER}/dev/nerd-fonts
+RUN mkdir /home/${NON_ROOT_USER}/dev;
+
+# RUN git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git /home/${NON_ROOT_USER}/dev/nerd-fonts
 
 # # RUN bash -c "source /home/${NON_ROOT_USER}/.dotfiles/install.sh"
 
