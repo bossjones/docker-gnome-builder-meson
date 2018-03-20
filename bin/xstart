@@ -4,7 +4,8 @@ set -x
 
 # SOURCE: https://github.com/chanezon/docker-tips/tree/master/x11
 
-export DISPLAY_MAC=`ifconfig en0 | grep "inet " | cut -d " " -f2`:0
+export _HOST_IP=$(ifconfig|grep 'inet '|grep -v '127.0.0.1'| \             head -1|awk '{print $2}')
+export DISPLAY_MAC=$_HOST_IP:0
 
 if [ -z "$(ps -ef|grep XQuartz|grep -v grep)" ] ; then
     open -a XQuartz
