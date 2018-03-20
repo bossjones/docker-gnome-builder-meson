@@ -261,7 +261,9 @@ ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 
 RUN curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
 
-RUN pyenv install 3.5.2
+RUN CFLAGS=-I/usr/include/openssl \
+    LDFLAGS=-L/usr/lib64 \
+    pyenv install 3.5.2
 
 ########################[EDITOR RELATED SETUP STUFF]################################
 
