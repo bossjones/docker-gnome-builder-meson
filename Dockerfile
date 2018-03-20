@@ -263,7 +263,8 @@ RUN set -xe \
 
 RUN flatpak install -y --from https://flathub.org/repo/appstream/org.gnome.Builder.flatpakref
 
-RUN mkdir /var/run/dbus
+RUN mkdir /var/run/dbus && \
+    chown developer:developer -Rv /home/developer
 
 USER developer
 
