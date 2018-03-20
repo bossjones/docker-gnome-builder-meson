@@ -335,8 +335,9 @@ ENV NODE_VERSION 6.9.1
 ENV RUBY_VERSION 2.4.2
 
 # # NOTE: https://github.com/jarolrod/vim-python-ide
-RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/jarolrod/vim-python-ide/master/setup.sh)" && \
-    git clone https://github.com/chriskempson/base16-shell.git /home/${NON_ROOT_USER}/.config/base16-shell
+# FIXME: Eanble this back again
+# RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/jarolrod/vim-python-ide/master/setup.sh)" && \
+#     git clone https://github.com/chriskempson/base16-shell.git /home/${NON_ROOT_USER}/.config/base16-shell
 RUN echo 'BASE16_SHELL=$HOME/.config/base16-shell/' >> ~/.bashrc
 RUN echo '[ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"'  >> ~/.bashrc
 
