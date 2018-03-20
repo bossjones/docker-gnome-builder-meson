@@ -291,11 +291,11 @@ RUN npm -v
 
 RUN chown ${NON_ROOT_USER}:${NON_ROOT_USER} -R /usr/local/nvm
 
-USER developer
-
 # https://github.com/pyenv/pyenv/issues/950
 # SOURCE: https://github.com/pyenv/pyenv/issues/950#issuecomment-348373683
-RUN sudo dnf remove openssl-devel -y && dnf install compat-openssl10-devel -y
+RUN dnf remove openssl-devel -y && dnf install compat-openssl10-devel -y
+
+USER developer
 
 ####################################
 ENV LANG C.UTF-8
