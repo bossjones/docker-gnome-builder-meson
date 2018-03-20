@@ -337,7 +337,7 @@ ENV NODE_VERSION 6.9.1
 ENV RUBY_VERSION 2.4.2
 
 # Compile and speed up ruby compilation
-RUN bash -c "RUBY_CFLAGS=\"-03\" rbenv install $RUBY_VERSION"
+RUN bash -c "source ~/.bashrc; RUBY_CFLAGS=\"-03\" rbenv install $RUBY_VERSION"
 
 # # NOTE: https://github.com/jarolrod/vim-python-ide
 # FIXME: Eanble this back again
