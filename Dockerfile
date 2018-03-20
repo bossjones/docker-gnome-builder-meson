@@ -261,75 +261,75 @@ ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 
 RUN curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
 
-RUN CFLAGS=-I/usr/include/openssl \
-    LDFLAGS=-L/usr/lib64 \
-    pyenv install 3.5.2
+# RUN CFLAGS=-I/usr/include/openssl \
+#     LDFLAGS=-L/usr/lib64 \
+#     pyenv install 3.5.2
 
-########################[EDITOR RELATED SETUP STUFF]################################
+# ########################[EDITOR RELATED SETUP STUFF]################################
 
-# Install rbenv to manage ruby versions
-RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv
-RUN cd ~/.rbenv && src/configure && make -C src
-RUN echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-RUN echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-RUN git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+# # Install rbenv to manage ruby versions
+# RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+# RUN cd ~/.rbenv && src/configure && make -C src
+# RUN echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+# RUN echo 'eval "$(rbenv init -)"' >> ~/.bashrc
+# RUN git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
 
-# Install vim-plug
-RUN curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+# # Install vim-plug
+# RUN curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-# Install dotfiles
-# ENV DOTFILE_VERSION 0.0.2
-# RUN git clone https://github.com/tyrbo/dotfiles.git --branch $DOTFILE_VERSION --depth 1 ~/.config/dotfiles
-ENV DOTFILE_VERSION master
-RUN git clone https://github.com/bossjones/linux-dotfiles.git /home/${NON_ROOT_USER}/.dotfiles; cd /home/${NON_ROOT_USER}/.dotfiles/; git checkout ${DOTFILE_VERSION}
+# # Install dotfiles
+# # ENV DOTFILE_VERSION 0.0.2
+# # RUN git clone https://github.com/tyrbo/dotfiles.git --branch $DOTFILE_VERSION --depth 1 ~/.config/dotfiles
+# ENV DOTFILE_VERSION master
+# RUN git clone https://github.com/bossjones/linux-dotfiles.git /home/${NON_ROOT_USER}/.dotfiles; cd /home/${NON_ROOT_USER}/.dotfiles/; git checkout ${DOTFILE_VERSION}
 
-RUN mkdir /home/${NON_ROOT_USER}/dev; git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git /home/${NON_ROOT_USER}/dev/nerd-fonts
+# RUN mkdir /home/${NON_ROOT_USER}/dev; git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git /home/${NON_ROOT_USER}/dev/nerd-fonts
 
-# RUN bash -c "source /home/${NON_ROOT_USER}/.dotfiles/install.sh"
+# # RUN bash -c "source /home/${NON_ROOT_USER}/.dotfiles/install.sh"
 
-# FIXME: Enable this!!!!!!!!
-# RUN pip3 install --upgrade pip && \
-# pip3 install --user neovim jedi mistune psutil setproctitle
-# pip install gitpython ptpython ipython
+# # FIXME: Enable this!!!!!!!!
+# # RUN pip3 install --upgrade pip && \
+# # pip3 install --user neovim jedi mistune psutil setproctitle
+# # pip install gitpython ptpython ipython
 
 
-# ENV NODE_VERSION 6.9.1
-ENV RUBY_VERSION 2.4.2
+# # ENV NODE_VERSION 6.9.1
+# ENV RUBY_VERSION 2.4.2
 
-# NOTE: https://github.com/jarolrod/vim-python-ide
-RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/jarolrod/vim-python-ide/master/setup.sh)" && \
-    git clone https://github.com/chriskempson/base16-shell.git /home/${NON_ROOT_USER}/.config/base16-shell
-RUN echo 'BASE16_SHELL=$HOME/.config/base16-shell/' >> ~/.bashrc
-RUN echo '[ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"'  >> ~/.bashrc
+# # NOTE: https://github.com/jarolrod/vim-python-ide
+# RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/jarolrod/vim-python-ide/master/setup.sh)" && \
+#     git clone https://github.com/chriskempson/base16-shell.git /home/${NON_ROOT_USER}/.config/base16-shell
+# RUN echo 'BASE16_SHELL=$HOME/.config/base16-shell/' >> ~/.bashrc
+# RUN echo '[ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"'  >> ~/.bashrc
 
-# FIXME: Add this to your vimrc file
-# if filereadable(expand("~/.vimrc_background"))
-#   let base16colorspace=256
-#   source ~/.vimrc_background
-# endif
+# # FIXME: Add this to your vimrc file
+# # if filereadable(expand("~/.vimrc_background"))
+# #   let base16colorspace=256
+# #   source ~/.vimrc_background
+# # endif
 
-# Install neovim plugins
-# vundle
-RUN bash -c "nvim +PluginInstall +qall"
+# # Install neovim plugins
+# # vundle
+# RUN bash -c "nvim +PluginInstall +qall"
 
-RUN echo 'eval "$(pyenv init -)"' >> ~/.bashrc
-RUN echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
-# SOURCE: https://github.com/pyenv/pyenv-virtualenvwrapper
-RUN echo 'export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"' >> ~/.bashrc
+# RUN echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+# RUN echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
+# # SOURCE: https://github.com/pyenv/pyenv-virtualenvwrapper
+# RUN echo 'export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"' >> ~/.bashrc
 
-# Setup virtualenvwrapper overall
-RUN . /home/${NON_ROOT_USER}/.bashrc; pyenv global 3.5.2; pyenv virtualenvwrapper
+# # Setup virtualenvwrapper overall
+# RUN . /home/${NON_ROOT_USER}/.bashrc; pyenv global 3.5.2; pyenv virtualenvwrapper
 
-# FIXME: bashrc is not being sourced, .profile is!! Fix this!
+# # FIXME: bashrc is not being sourced, .profile is!! Fix this!
 
-# RUN npm install -g neovim && \
-#     gem install neovim
+# # RUN npm install -g neovim && \
+# #     gem install neovim
 
-RUN mkdir -p ~/.local/share/fonts/ && \
-    git clone git://github.com/powerline/fonts.git ~/.config/powerline/fonts && \
-    bash ~/.config/powerline/fonts/install.sh && \
-    pip install --user powerline-status powerline-gitstatus==1.2.1
-####################################
+# RUN mkdir -p ~/.local/share/fonts/ && \
+#     git clone git://github.com/powerline/fonts.git ~/.config/powerline/fonts && \
+#     bash ~/.config/powerline/fonts/install.sh && \
+#     pip install --user powerline-status powerline-gitstatus==1.2.1
+# ####################################
 
 
 # USER developer
