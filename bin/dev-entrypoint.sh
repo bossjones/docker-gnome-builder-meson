@@ -12,7 +12,9 @@ export _UID=$(id -u)
 export _GID=$(id -g)
 export DOCKER_DEVELOPER_CHROOT=".docker-${NON_ROOT_USER}-chroot"
 export DOCKER_DEVELOPER_CHROOT_FULL_PATH=${HOME}/${DOCKER_DEVELOPER_CHROOT}
-export _HOST_IP=$(ifconfig en0 | grep "inet "| awk '{print $2}')
+# export _HOST_IP=$(ifconfig en0 | grep "inet "| awk '{print $2}')
+export _HOST_IP=$(ifconfig|grep 'inet '|grep -v '127.0.0.1'| \
+            head -1|awk '{print $2}')
 export USERNAME=bossjones
 export CONTAINER_NAME=gnome-builder-meson
 export DISPLAY_MAC=`ifconfig en0 | grep "inet " | cut -d " " -f2`:0
