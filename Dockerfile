@@ -2,8 +2,7 @@ FROM fedora:rawhide
 
 LABEL Maintainer "Malcolm Jones <bossjones@theblacktonystark.com>"
 
-ENV JVMTOP_VER=0.8.0 \
-    GOSS_VER=v0.3.4 \
+ENV GOSS_VER=v0.3.4 \
     TMUX_VER=2.3 \
     DOCKER_VER=17.05.0-ce \
     DOCKER_COMPOSE_VER=1.18.0
@@ -13,7 +12,6 @@ ENV JVMTOP_VER=0.8.0 \
 ENV container docker
 
 # LABEL RUN="docker run -it --name NAME --privileged --ipc=host --net=host --pid=host -e HOST=/host -e NAME=NAME -e IMAGE=IMAGE -v /run:/run -v /var/log:/var/log -v /etc/localtime:/etc/localtime -v /:/host IMAGE"
-
 
 RUN echo "fastestmirror=True" >> /etc/dnf/dnf.conf
 RUN [ -e /etc/yum.conf ] && sed -i '/tsflags=nodocs/d' /etc/yum.conf || true
@@ -28,6 +26,21 @@ ENV HOST_GROUP_ID ${HOST_GROUP_ID}
 # ENV LANG en_US.UTF-8
 # ENV LANGUAGE en_US:en
 # ENV LC_ALL en_US.UTF-8
+
+# # Install all useful packages
+# RUN set -x; \
+#     dnf -y update && \
+#     # Reinstall all packages to get man pages for them
+#     dnf -y reinstall "*" \
+#     dnf -y remove vim-minimal && \
+#     dnf -y install \
+#     abrt \
+#     bash-completion \
+#     bc \
+#     blktrace \
+#     btrfs-progs \
+#     crash \
+#     dnf-plugins-core \
 
 # Sets term to xterm-256color - needed for proper coloring in tmux.
 ENV TERM xterm-256color
@@ -77,21 +90,6 @@ RUN dnf -y update && \
                         development-tools \
                         gnome-software-development; \
     dnf clean all
-
-# # Install all useful packages
-# RUN set -x; \
-#     dnf -y update && \
-#     # Reinstall all packages to get man pages for them
-#     dnf -y reinstall "*" \
-#     dnf -y remove vim-minimal && \
-#     dnf -y install \
-#     abrt \
-#     bash-completion \
-#     bc \
-#     blktrace \
-#     btrfs-progs \
-#     crash \
-#     dnf-plugins-core \
 
 RUN dnf -y install ninja-build \
     appstream-devel \
@@ -149,6 +147,7 @@ RUN dnf -y install ninja-build \
     template-glib-devel \
     vala \
     vim \
+    tmux \
     vte291-devel \
     webkit2gtk3-devel \
     wxGTK3-devel \
@@ -208,28 +207,6 @@ RUN dnf install -y \
 # Warning: python3-lxml is not installed, no documentation will be available in Python auto-completion
 # jedi not found, python auto-completion not possible.
 
-# RUN apt-get update && apt-get install -y \
-#     apt-transport-https \
-#     ca-certificates \
-#     curl \
-#     gconf2 \
-#     gconf-service \
-#     gvfs-bin \
-#     hunspell-en-us \
-#     libasound2 \
-#     libgtk2.0-0 \
-#     libnotify4 \
-#     libnss3 \
-#     libxss1 \
-#     libxtst6 \
-#     locales \
-#     python \
-#     xdg-utils \
-#     libgnome-keyring0 \
-#     gir1.2-gnomekeyring-1.0 \
-#     libappindicator1 \
-#     --no-install-recommends
-
 # pip3 install -I path.py==7.7.1; \
 RUN cd /usr/local/src/; \
     curl -s -q -L 'https://bootstrap.pypa.io/ez_setup.py' > ez_setup.py; \
@@ -251,18 +228,6 @@ RUN cd /usr/local/src && \
     ninja -C build && \
     ninja -C build install
 
-
-# COPY bin/entrypoint.sh /entrypoint.sh
-
-# RUN export uid=1000 gid=1000 && \
-#     mkdir -p /home/developer && \
-#     echo "developer:x:${uid}:${gid}:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
-#     echo "developer:x:${uid}:" >> /etc/group && \
-#     echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
-#     echo "%developer ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/developer && \
-#     chmod 0440 /etc/sudoers.d/developer && \
-#     chown ${uid}:${gid} -R /home/developer
-
 RUN set -xe \
     && useradd -U -d /home/developer -m -r -G adm,tty,audio developer \
     && usermod -a -G developer -s /bin/bash -u ${HOST_USER_ID} developer \
@@ -277,6 +242,8 @@ RUN set -xe \
     && echo 'developer:developer' | chpasswd
 
 # RUN useradd -m -d /home/developer developer
+
+RUN flatpak install -y --from https://flathub.org/repo/appstream/org.gnome.Builder.flatpakref
 
 RUN mkdir /var/run/dbus
 

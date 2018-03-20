@@ -149,3 +149,6 @@ xstart:
 
 mkdirs:
 	mkdir -p $$HOME/$(docker_developer_chroot)
+
+run-dev:
+	dev-entrypoint.sh
