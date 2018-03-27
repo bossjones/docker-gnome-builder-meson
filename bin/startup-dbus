@@ -9,10 +9,10 @@ sudo dbus-daemon --system --fork
 export $(dbus-launch)
 
 # eval _DBUS_LAUNCH_OUTPUT=$(dbus-launch)
-
-env | grep -i dbus > ~/.dbusrc
+env | grep DBUS > ~/.dbusrc
 sed -i "s,^,export ,g" ~/.dbusrc
-echo 'export DBUS_SYSTEM_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS}"' >> ~/.dbusrc
+echo 'export DBUS_SYSTEM_BUS_ADDRESS=${DBUS_SESSION_BUS_ADDRESS}' >> ~/.dbusrc
+cat ~/.dbusrc
 
 source ~/.dbusrc
 

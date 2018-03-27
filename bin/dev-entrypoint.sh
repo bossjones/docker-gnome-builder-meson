@@ -44,14 +44,14 @@ else
   -it \
   --net host \
   -e HOME=${NON_ROOT_USER_HOME_DIR} \
-  -e UID=${_UID} \
-  -e GID=${_GID} \
+  -e UID \
+  -e GID \
   -e DISPLAY=${DISPLAY_MAC} \
   -e XAUTHORITY=/tmp/xauth \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v ~/.Xauthority:/tmp/xauth \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
-  -v DOCKER_DEVELOPER_CHROOT_FULL_PATH:$HOME \
+  -v $DOCKER_DEVELOPER_CHROOT_FULL_PATH:$HOME \
   -v /run/user/${UID}/pulse:/run/pulse \
   \
   -v $PWD:/home/$NON_ROOT_USER/$DIR \

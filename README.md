@@ -156,3 +156,26 @@ DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-i1mFh6aILo,guid=c3b5c8beeb4a032
 DBUS_SESSION_BUS_PID=198
 DBUS_SESSION_BUS_WINDOWID=10485761
 ```
+
+
+# jhbuild
+
+**https://github.com/bossjones/boss-docker-jhbuild-pygobject3/blob/master/container/root/scripts/compile_jhbuild_and_deps.sh**
+
+# Install all gnome dependencies using flatpak
+
+**SOURCE: https://wiki.gnome.org/Apps/Evolution/Flatpak**
+**SOURCE: https://wiki.debian.org/FlatpakHowto**
+**SOURCE: https://fedoraproject.org/wiki/GNOME_Builder**
+
+```
+$ flatpak remote-add --from gnome https://sdk.gnome.org/gnome.flatpakrepo
+$ flatpak remote-add --from gnome-apps https://sdk.gnome.org/gnome-apps.flatpakrepo
+$ flatpak install gnome-apps org.gnome.Builder
+```
+
+```
+flatpak --user remote-add --from gnome https://sdk.gnome.org/gnome.flatpakrepo
+flatpak --user install gnome org.gnome.Platform//3.22
+flatpak --user install gnome org.gnome.Sdk//3.22
+```
