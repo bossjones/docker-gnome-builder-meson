@@ -82,3 +82,4 @@ var/
 venv/
 .bash_history
 .dbusrc
+SOCAT_PID

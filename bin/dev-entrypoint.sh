@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
-set -e
+# set -e
 
 # FIXME: Make me into the end all starter script
 
 # SOURCE: https://hub.docker.com/r/kayvan/scidvspc/
 
 DIR=$(basename $PWD)
+
+n_procs=()
 
 export NON_ROOT_USER="developer"
 export _UID=$(id -u)
@@ -19,7 +21,11 @@ export USERNAME=bossjones
 export CONTAINER_NAME=gnome-builder-meson
 export NON_ROOT_USER_HOME_DIR=/home/${NON_ROOT_USER}
 
+# run xhost and allow connections from your local machine:
+xhost + $_HOST_IP
+
 echo "INFO: Stop all running xquartz"
+# pgrep procname || echo Not running
 killall -0 quartz-wm > /dev/null 2>&1
 if [ $? -ne 0 ]; then
   echo "INFO: Quartz is not running. Start Quartz and try again."
@@ -33,11 +39,64 @@ if [ $? -ne 0 ]; then
   if [ $? -ne 0 ]; then
       echo "INFO: Socat is not running."
   fi
+  sleep 10
+
+  echo "INFO: Starting up socat."
+  socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
+  # FIXME: Verify this works!
+  # SOURCE: https://stackoverflow.com/questions/356100/how-to-wait-in-bash-for-several-subprocesses-to-finish-and-return-exit-code-0?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa#
+  n_procs[${i}]=$!
+  # SOCAT_SCID_PID=$!
+
+  # for i in $n_procs; do ./procs[${i}] & ; pids[${i}]=$!; done; for pid in ${pids[*]}; do wait $pid; done;
+
+  for pid in ${n_procs[*]}; do
+    touch SOCAT_PID
+    echo $pid > SOCAT_PID
+    wait $pid;
+  done;
+  # SOCAT_SCID_PID=$!
+  # touch SOCAT_PID
+  # echo ${SOCAT_SCID_PID} > SOCAT_PID
+
 else
   echo "INFO: Bringing up socat"
 
+  # if [[ -f $DIR/SOCAT_PID ]]; then
+  #   kill $(/bin/cat ${DIR}/SOCAT_PID)
+  # fi
+
+  #   # this does not work after a docker run command
+  # # FIXME: Add these lines so we can cache node modules etc
+  # #   -v $HOME/.dev/.rbenv/versions:/home/dev/.rbenv/versions \
+  # #   -v $HOME/.dev/.nodenv/versions:/home/dev/.nodenv/versions \
+
+  #   kill $SOCAT_SCID_PID
+
   socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
-  SOCAT_SCID_PID=$!
+  n_procs[${i}]=$!
+  # SOCAT_SCID_PID=$!
+
+  # for i in $n_procs; do ./procs[${i}] & ; pids[${i}]=$!; done; for pid in ${pids[*]}; do wait $pid; done;
+
+  for pid in ${n_procs[*]}; do
+    echo $pid > SOCAT_PID
+    wait $pid;
+  done;
+
+  export LC_ALL="en_US.UTF-8"
+  export LANG="en_US.UTF-8"
+  export LANGUAGE="en_US.UTF-8"
+  export C_CTYPE="en_US.UTF-8"
+  export LC_NUMERIC=
+  export LC_TIME=en"en_US.UTF-8"
+
+  # export LC_ALL="en_US"
+  # export LANG="en_US"
+  # export LANGUAGE="en_US"
+  # export C_CTYPE="en_US"
+  # export LC_NUMERIC=
+  # export LC_TIME=en"en_US"
 
   docker run \
   --privileged \
@@ -61,10 +120,5 @@ else
   -w /home/$NON_ROOT_USER/$DIR \
   $USERNAME/$CONTAINER_NAME:latest bash
 
-# FIXME: Add these lines so we can cache node modules etc
-#   -v $HOME/.dev/.rbenv/versions:/home/dev/.rbenv/versions \
-#   -v $HOME/.dev/.nodenv/versions:/home/dev/.nodenv/versions \
-
-  kill $SOCAT_SCID_PID
 fi
 
