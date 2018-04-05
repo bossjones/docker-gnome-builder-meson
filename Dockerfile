@@ -1,4 +1,4 @@
-FROM fedora:rawhide
+FROM fedora:28
 
 LABEL Maintainer "Malcolm Jones <bossjones@theblacktonystark.com>"
 
