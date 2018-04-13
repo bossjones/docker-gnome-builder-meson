@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# NOTE: THIS NEEDS TO RUN BEFORE XQUARTZ STARTS UP
+
+
+[[ "$TRACE" ]] && set -x
+echo "[Get] process"
+ps aux | grep socat
+
+pgrep socat
+pgrep -l socat
+
+# pkill -F
+
+echo "[Get] process after kill"
+ps aux | grep socat
+

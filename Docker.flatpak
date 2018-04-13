@@ -1,15 +1,45 @@
-FROM fedora:26
-MAINTAINER Gerard Braad <me@gbraad.nl>
+FROM fedora:28
 
-RUN mkdir -p /workspace; \
-    dnf install -y git wget flatpak flatpak-builder make elfutils; \
-    wget https://sdk.gnome.org/keys/gnome-sdk.gpg; \
-    flatpak remote-add --gpg-import=gnome-sdk.gpg gnome https://sdk.gnome.org/repo/; \
-    flatpak install gnome org.gnome.Platform 3.24; \
-    flatpak install gnome org.gnome.Sdk 3.24
+LABEL Maintainer "Malcolm Jones <bossjones@theblacktonystark.com>"
 
-VOLUME /workspace
-WORKDIR /workspace
 
-CMD bash
+ENV GOSS_VER=v0.3.4 \
+    TMUX_VER=2.3 \
+    DOCKER_VER=17.05.0-ce \
+    DOCKER_COMPOSE_VER=1.18.0 \
+    NON_ROOT_USER=developer \
+    CFLAGS='-O2'
 
+# source: https://hub.docker.com/_/fedora/
+# source: https://github.com/fedora-cloud/Fedora-Dockerfiles/blob/master/tools/Dockerfile
+ENV container docker
+
+# LABEL RUN="docker run -it --name NAME --privileged --ipc=host --net=host --pid=host -e HOST=/host -e NAME=NAME -e IMAGE=IMAGE -v /run:/run -v /var/log:/var/log -v /etc/localtime:/etc/localtime -v /:/host IMAGE"
+
+RUN echo "fastestmirror=True" >> /etc/dnf/dnf.conf
+RUN [ -e /etc/yum.conf ] && sed -i '/tsflags=nodocs/d' /etc/yum.conf || true
+
+ARG HOST_USER_ID=1000
+ENV HOST_USER_ID ${HOST_USER_ID}
+ARG HOST_GROUP_ID=1000
+ENV HOST_GROUP_ID ${HOST_GROUP_ID}
+
+# Install Flatpak and dependencies
+RUN dnf install flatpak flatpak-builder wget git bzip2 elfutils make ostree -y && \
+    dnf clean all
+
+RUN set -xe \
+    && useradd -U -d /home/developer -m -r -G adm,tty,audio developer \
+    && usermod -a -G developer -s /bin/bash -u ${HOST_USER_ID} developer \
+    && groupmod -g ${HOST_GROUP_ID} developer \
+    && ( mkdir /home/developer/.ssh \
+    && chmod og-rwx /home/developer/.ssh \
+    && echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key" > /home/developer/.ssh/authorized_keys \
+    ) \
+    && echo 'developer     ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
+    && echo '%developer     ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
+    && cat /etc/sudoers \
+    && echo 'developer:developer' | chpasswd
+
+RUN mkdir /var/run/dbus && \
+    chown developer:developer -Rv /home/developer

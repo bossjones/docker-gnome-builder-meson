@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# NOTE: THIS NEEDS TO RUN BEFORE XQUARTZ STARTS UP
+
+[[ "$TRACE" ]] && set -x
+
+open -a XQuartz

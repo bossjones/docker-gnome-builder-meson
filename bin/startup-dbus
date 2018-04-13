@@ -16,5 +16,5 @@ cat ~/.dbusrc
 
 source ~/.dbusrc
 
-flatpak run --share=network --command=bash \
+exec flatpak run --share=network --command=bash \
 org.gnome.Builder -c "DISPLAY=$DISPLAY gnome-builder"

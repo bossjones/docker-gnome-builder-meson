@@ -16,13 +16,16 @@ export DOCKER_DEVELOPER_CHROOT=".docker-${NON_ROOT_USER}-chroot"
 export DOCKER_DEVELOPER_CHROOT_FULL_PATH=${HOME}/${DOCKER_DEVELOPER_CHROOT}
 # export _HOST_IP=$(ifconfig|grep 'inet '|grep -v '127.0.0.1'| head -1|awk '{print $2}')
 export _HOST_IP=$(ifconfig|grep 'inet '|grep -v '127.0.0.1'| head -1|awk '{print $2}')
-export DISPLAY_MAC=$_HOST_IP:0
+export DISPLAY_MAC=$_HOST_IP:1
 export USERNAME=bossjones
 export CONTAINER_NAME=gnome-builder-meson
 export NON_ROOT_USER_HOME_DIR=/home/${NON_ROOT_USER}
+export IP_VIA_I_CAN_HAZ_IP=$(curl ipv4.icanhazip.com)
 
 # run xhost and allow connections from your local machine:
 xhost + $_HOST_IP
+xhost + $IP_VIA_I_CAN_HAZ_IP
+
 
 echo "INFO: Stop all running xquartz"
 # pgrep procname || echo Not running
@@ -41,8 +44,11 @@ if [ $? -ne 0 ]; then
   fi
   sleep 10
 
+  # until [ $DISKFUL -ge "90" ]; do
+  # done
+
   echo "INFO: Starting up socat."
-  socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
+  socat TCP-LISTEN:6001,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
   # FIXME: Verify this works!
   # SOURCE: https://stackoverflow.com/questions/356100/how-to-wait-in-bash-for-several-subprocesses-to-finish-and-return-exit-code-0?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa#
   n_procs[${i}]=$!
@@ -73,7 +79,7 @@ else
 
   #   kill $SOCAT_SCID_PID
 
-  socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
+  socat TCP-LISTEN:6001,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
   n_procs[${i}]=$!
   # SOCAT_SCID_PID=$!
 
@@ -96,7 +102,7 @@ else
   # export LANGUAGE="en_US"
   # export C_CTYPE="en_US"
   # export LC_NUMERIC=
-  # export LC_TIME=en"en_US"
+  # export LC_TIME="en_US"
 
   docker run \
   --privileged \

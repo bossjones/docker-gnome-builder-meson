@@ -179,3 +179,118 @@ flatpak --user remote-add --from gnome https://sdk.gnome.org/gnome.flatpakrepo
 flatpak --user install gnome org.gnome.Platform//3.22
 flatpak --user install gnome org.gnome.Sdk//3.22
 ```
+
+# Error building flatpaks in containers
+
+```
+Installing: org.gnome.Sdk/x86_64/3.28 from flathub
+[####################] 19 delta parts, 163 loose fetched; 358755 KiB transferred
+Installing: org.freedesktop.Platform.ffmpeg/x86_64/1.6 from flathub
+[####################] 1 delta parts, 2 loose fetched; 2652 KiB transferred in 1
+Installing: org.gnome.Sdk.Locale/x86_64/3.28 from flathub
+[####################] 5 delta parts, 120 loose fetched; 95189 KiB transferred i
+Installing: org.gnome.Builder/x86_64/stable from flathub
+[####################] 3 delta parts, 7 loose fetched; 20157 KiB transferred in bwrap: Creating new namespace failed: Operation not permitted
+bwrap: Creating new namespace failed: Operation not permitted
+bwrap: Creating new namespace failed: Operation not permitted
+```
+
+Git Issue: https://github.com/flatpak/flatpak/issues/1326
+
+# Steps to run builder
+
+NOTES FROM: http://kartoza.com/en/blog/how-to-run-a-linux-gui-application-on-osx-using-docker/
+
+```
+Start socat (in my testing it had to be done first)
+
+Start XQuartz
+
+Start Docker
+
+Start gnome-builder from flatpak run command
+
+```
+
+# Break down socat command
+
+`socat TCP-LISTEN:6001,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\"`
+
+`Example DISPLAY=/private/tmp/com.apple.launchd.dfhdhfdh/org.macosforge.xquartz:0`
+
+SOURCE: http://www.dest-unreach.org/socat/doc/socat.html#OPTION_REUSEADDR
+
+```
+socat
+
+TCP-LISTEN:
+--------------------------------
+listen on port 6000, wait for an incoming connection
+
+reuseaddr:
+--------------------------------
+Allows other sockets to bind to an address even if parts of it (e.g. the local port) are already in use by socat (example).
+
+fork:
+--------------------------------
+after establishing a connection, handles its channel in a child process and keeps the parent process attempting to produce more connections, either by listening or by connecting in a loop (example).
+OPENSSL-CONNECT and OPENSSL-LISTEN differ in when they actually fork off the child: OPENSSL-LISTEN forks before the SSL handshake, while OPENSSL-CONNECT forks afterwards. RETRY and FOREVER options are not inherited by the child process.
+On some operating systems (e.g. FreeBSD) this option does not work for UDP-LISTEN addresses.
+
+UNIX-CLIENT:
+--------------------------------
+EG. UNIX-CLIENT:<filename>
+Communicates with the specified peer socket, defined by [<filename>] assuming it is a UNIX domain socket. It first tries to connect and, if that fails, assumes it is a datagram socket, thus supporting both types.
+Option groups: FD,SOCKET,NAMED,UNIX
+Useful options: bind
+See also: UNIX-CONNECT, UNIX-SENDTO, GOPEN
+```
+
+
+# This is where we left off re: figuring out how to use remote display locally.
+
+cc: https://unix.stackexchange.com/questions/242146/network-namespace-ssh-x11?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+
+```
+// access local display from ssh server, when ssh port forwarding is disabled
+// socat must be installed on ssh server host
+// might have to use xauth...
+// this example is one-shot because ssh can handle only one channel
+xterm1$ socat -d -d exec:"ssh www.dest-unreach.org rm -f /tmp/.X11-unix/X9; ~/bin/socat -d -d unix-l\:/tmp/.X11-unix/X9\,fork -" unix:/tmp/.X11-unix/X0
+xterm2$ ssh target
+target$ DISPLAY=:9 myxapplication
+```
+
+# docker login w/ secrets ( also see keyring.rst )
+
+`~/.docker/config.json`
+
+```
+{
+  "auths" : {
+    "https://index.docker.io/v1/" : {
+
+    }
+  },
+  "credsStore" : "secretservice"
+}
+```
+
+`sudo dnf install python3-docker-pycreds.noarch python2-docker-pycreds.noarch`
+
+# list authorized sessions
+
+```
+# lists xauth cookies existing
+
+[oracle@localhost ~]$ xauth list
+localhost.localdomain/unix:11  MIT-MAGIC-COOKIE-1  310f1b02c1080e73059391c193a1881b
+localhost.localdomain/unix:10  MIT-MAGIC-COOKIE-1  41843db100830a2aa352641ac47bb759
+```
+
+# Setups to get working (4/12/2018)
+1. xhost + $(ifconfig en0 | grep "inet "| awk '{print $2}')
+1. open -a XQuartz
+2. Verify DISPLAY has been set, eg `DISPLAY=/private/tmp/com.apple.launchd.bxHghBDDkr/org.macosforge.xquartz:0`
+3. Run socat bind to 6000 + 1 port. `socat TCP-LISTEN:6001,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\"`
+4. Run docker command.

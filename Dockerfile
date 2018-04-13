@@ -6,7 +6,8 @@ ENV GOSS_VER=v0.3.4 \
     TMUX_VER=2.3 \
     DOCKER_VER=17.05.0-ce \
     DOCKER_COMPOSE_VER=1.18.0 \
-    NON_ROOT_USER=developer
+    NON_ROOT_USER=developer \
+    CFLAGS='-O2'
 
 # source: https://hub.docker.com/_/fedora/
 # source: https://github.com/fedora-cloud/Fedora-Dockerfiles/blob/master/tools/Dockerfile
@@ -128,7 +129,9 @@ RUN dnf -y install ninja-build \
     flatpak-builder \
     flatpak-devel \
     flatpak-libs \
-    flex bison \
+    elfutils \
+    flex \
+    bison \
     fpaste \
     gcc \
     gcc-c++ \
@@ -238,13 +241,14 @@ RUN cd /usr/local/src/; \
     pip3 install virtualenv virtualenvwrapper ipython; \
     pip3 install meson
 
-RUN cd /usr/local/src && \
-    git clone git://git.gnome.org/gnome-builder && \
-    cd gnome-builder && \
-    git checkout 3.28.0 && \
-    meson --prefix=/usr build && \
-    ninja -C build && \
-    ninja -C build install
+# DISABLED(4/10/2018): WE don't need to compile it from source if we have it available in flatpak already
+# RUN cd /usr/local/src && \
+#     git clone git://git.gnome.org/gnome-builder && \
+#     cd gnome-builder && \
+#     git checkout 3.28.0 && \
+#     meson --prefix=/usr build && \
+#     ninja -C build && \
+#     ninja -C build install
 
 RUN set -xe \
     && useradd -U -d /home/developer -m -r -G adm,tty,audio developer \
@@ -258,10 +262,6 @@ RUN set -xe \
     && echo '%developer     ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
     && cat /etc/sudoers \
     && echo 'developer:developer' | chpasswd
-
-# RUN useradd -m -d /home/developer developer
-
-RUN flatpak install -y --from https://flathub.org/repo/appstream/org.gnome.Builder.flatpakref
 
 RUN mkdir /var/run/dbus && \
     chown developer:developer -Rv /home/developer
@@ -295,6 +295,9 @@ RUN chown ${NON_ROOT_USER}:${NON_ROOT_USER} -R /usr/local/nvm
 # SOURCE: https://github.com/pyenv/pyenv/issues/950#issuecomment-348373683
 RUN dnf remove openssl-devel -y && dnf install compat-openssl10-devel -y && dnf install -y ruby-devel.x86_64 ruby-libs.x86_64
 
+# SOURCE: https://docs.docker.com/engine/reference/builder/#copy
+COPY --chown=developer:developer ./ /app
+
 USER developer
 
 ####################################
@@ -304,22 +307,20 @@ ENV PYENV_ROOT /home/${NON_ROOT_USER}/.pyenv
 ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 
 RUN mkdir -p ~/.local/share/fonts
-RUN curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
-
-RUN git clone https://github.com/pyenv/pyenv-virtualenvwrapper /home/${NON_ROOT_USER}/.pyenv/plugins/pyenv-virtualenvwrapper && \
+RUN curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash && \
+    git clone https://github.com/pyenv/pyenv-virtualenvwrapper /home/${NON_ROOT_USER}/.pyenv/plugins/pyenv-virtualenvwrapper && \
     git clone https://github.com/pyenv/pyenv-pip-rehash /home/${NON_ROOT_USER}/.pyenv/plugins/pyenv-pip-rehash && \
-    git clone https://github.com/pyenv/pyenv-pip-migrate /home/${NON_ROOT_USER}/.pyenv/plugins/pyenv-pip-migrate
-
-RUN pyenv install 3.5.2
+    git clone https://github.com/pyenv/pyenv-pip-migrate /home/${NON_ROOT_USER}/.pyenv/plugins/pyenv-pip-migrate && \
+    pyenv install 3.5.2
 
 # ########################[EDITOR RELATED SETUP STUFF]################################
 
 # # Install rbenv to manage ruby versions
-RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv
-RUN cd ~/.rbenv && src/configure && make -C src
-RUN echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-RUN echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-RUN git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv && \
+    cd ~/.rbenv && src/configure && make -C src && \
+    echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc && \
+    echo 'eval "$(rbenv init -)"' >> ~/.bashrc && \
+    git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
 
 # # Install vim-plug
 # RUN curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -427,3 +428,5 @@ RUN mkdir -p ~/.local/share/fonts/ && \
 # EXPOSE 5901
 
 # CMD    ["vncserver", "-fg" ]
+
+RUN echo 'export PATH="/app/bin:$PATH"' >> ~/.bashrc

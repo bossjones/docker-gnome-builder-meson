@@ -45,7 +45,6 @@ __pycache__/
 _debug/
 ansible.cfg
 ansible_variables.all
-bin/
 build/
 config.json
 coverage.xml
@@ -81,3 +80,8 @@ target/
 temp*
 var/
 venv/
+.bash_history
+.dbusrc
+SOCAT_PID
+.viminfo
+hi

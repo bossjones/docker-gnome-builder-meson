@@ -13,3 +13,12 @@
     - [ ] `~/.xprofile`
 - [ ] Consider supervisord as startup system
 - [ ] Consider straight up systemd as startup system
+
+
+```
+# Mess w/ fedora workstation
+
+# Enable the GUI at startup
+systemctl enable gdm.service
+systemctl set-default graphical.target
+```

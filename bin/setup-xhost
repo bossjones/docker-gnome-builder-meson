@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+if test "$TRACE" = "1"; then set -x; fi
+
+if test "z$1" = "z"; then echo "Please pass in a networking interface name, eg 'en0' "; fi
+
+_INTERFACE=$1
+
+# SOURCE: https://github.com/chanezon/docker-tips/tree/master/x11
+
+export _HOST_IP=$(ifconfig ${_INTERFACE} | grep "inet "| awk '{print $2}')
+
+xhost + $_HOST_IP
+
+echo "setup-xhost: verify we added $_HOST_IP to xhost correctly"
+
+# xhost
+xauth list

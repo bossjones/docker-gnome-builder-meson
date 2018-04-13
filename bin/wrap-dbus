@@ -28,7 +28,7 @@ container_name=gnome-builder-meson
 NON_ROOT_USER=developer
 DIR=$(basename $PWD)
 export _HOST_IP=$(ifconfig|grep 'inet '|grep -v '127.0.0.1'| head -1|awk '{print $2}')
-export DISPLAY_MAC=$_HOST_IP:0
+export DISPLAY_MAC=$_HOST_IP:1
 
 [ -z $1 ] && exit 127
 

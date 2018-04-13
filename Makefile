@@ -4,7 +4,25 @@ SHELL := $(shell which bash)
 
 DIR   := $(shell basename $$PWD)
 
+TRACE=
+
+ifdef trace
+TRACE=1
+endif
+
 # export DOCKER_IP = $(shell which docker-machine > /dev/null 2>&1 && docker-machine ip $(DOCKER_MACHINE_NAME))
+
+ED=\033[0;31m
+GREEN=\033[0;32m
+ORNG=\033[38;5;214m
+BLUE=\033[38;5;81m
+NC=\033[0m
+
+export RED
+export GREEN
+export NC
+export ORNG
+export BLUE
 
 export PATH := ./bin:./venv/bin:$(PATH)
 
@@ -12,8 +30,8 @@ YOUR_HOSTNAME := $(shell hostname | cut -d "." -f1 | awk '{print $1}')
 
 export HOST_IP=$(shell curl ipv4.icanhazip.com 2>/dev/null)
 
-username := bossjones
-container_name := gnome-builder-meson
+username := scarlettos
+container_name := docker-gnome-builder-meson
 docker_developer_chroot := .docker-developer
 
 GIT_BRANCH    = $(shell git rev-parse --abbrev-ref HEAD)
@@ -21,6 +39,9 @@ GIT_SHA       = $(shell git rev-parse HEAD)
 BUILD_DATE    = $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 VERSION       = latest
 NON_ROOT_USER = developer
+
+IMAGE_TAG      := $(username)/$(container_name):$(GIT_SHA)
+CONTAINER_NAME := $(shell echo -n $(IMAGE_TAG) | openssl dgst -sha1 | sed 's/^.* //'  )
 
 LOCAL_REPOSITORY = $(HOST_IP):5000
 
@@ -30,8 +51,38 @@ ifeq ($(TAG),@branch)
 	@echo $(value TAG)
 endif
 
+# verify that certain variables have been defined off the bat
+check_defined = \
+    $(foreach 1,$1,$(__check_defined))
+__check_defined = \
+    $(if $(value $1),, \
+      $(error Undefined $1$(if $(value 2), ($(strip $2)))))
+
+list_allowed_args := interface
+
 list:
 	@$(MAKE) -qp | awk -F':' '/^[a-zA-Z0-9][^$#\/\t=]*:([^=]|$$)/ {split($$1,A,/ /);for(i in A)print A[i]}' | sort
+
+# FIXME: Implement this
+build-two-phase: build
+	time docker run \
+	--privileged \
+	-i \
+	-e TRACE=1 \
+	--cap-add=ALL \
+	--tty \
+	--name $(CONTAINER_NAME) \
+	--entrypoint "bash" \
+	$(IMAGE_TAG) \
+	/app/bin/flatpak-bootstrap.sh
+
+# Commit backend Container
+	time docker commit --message "Makefile docker CI dep install for $(username)/$(container_name)" $(CONTAINER_NAME) $(IMAGE_TAG)
+	time docker commit --message "Makefile docker CI dep install for $(username)/$(container_name)" $(CONTAINER_NAME) $(username)/$(container_name):latest
+
+# Commit backend Container
+build-commit:
+	time docker commit --message "Makefile docker CI dep install for $(username)/$(container_name)" $(CONTAINER_NAME) $(IMAGE_TAG)
 
 build:
 	docker build --tag $(username)/$(container_name):$(GIT_SHA) . ; \
@@ -56,6 +107,8 @@ push-local:
 	docker push $(LOCAL_REPOSITORY)/$(username)/$(container_name):latest
 
 build-push-local: build-local tag-local push-local
+
+build-push-two-phase: build-two-phase tag push
 
 tag:
 	docker tag $(username)/$(container_name):$(GIT_SHA) $(username)/$(container_name):latest
@@ -86,6 +139,9 @@ dc-restart: dc-down dc-up
 dc-build:
 	docker-compose build --force-rm --pull
 
+pull-latest:
+	docker pull $(username)/$(container_name):latest
+
 pull:
 	docker-compose pull
 
@@ -110,6 +166,8 @@ run-bash:
 	-it \
 	-e UID \
 	-e GID \
+	--privileged \
+	--cap-add=ALL \
 	-e DISPLAY=$$DISPLAY \
 	-v /tmp/.X11-unix:/tmp/.X11-unix \
 	-v /run/user/$(UID)/pulse:/run/pulse \
@@ -155,3 +213,48 @@ run-dev:
 
 run-tmux:
 	tmux-entrypoint.sh
+
+start:
+	echo hi
+
+start-socat:
+	$(call check_defined, interface, Please set interface)
+	start-socat $(interface)
+
+kill-socat:
+	kill-socat
+
+stop-start-socat: kill-socat start-socat
+
+start-xquartz:
+	start-xquartz
+
+setup-xhost:
+	$(call check_defined, interface, Please set interface)
+	setup-xhost $(interface)
+
+# run:
+# 	$(call check_defined, interface, Please set interface)
+# 	$(MAKE) setup-xhost $(interface)
+# 	$(MAKE) start-socat $(interface)
+# 	$(MAKE) start-xquartz
+# 	$$TRACE docker-run-dbus-shell.sh $(interface)
+
+run: setup-xhost start-socat start-xquartz
+	$(call check_defined, interface, Please set interface)
+	docker-run-dbus-shell.sh $(interface)
+
+run-gnome-builder:
+	$(call check_defined, interface, Please set interface)
+	run-gnome-builder $(interface)
+
+
+entrypoint-dbus-bash:
+	entrypoint-dbus-bash
+
+docker-run-dbus-shell:
+	$(call check_defined, interface, Please set interface)
+	docker-run-dbus-shell.sh $(interface)
+
+run-usage:
+	echo "make run interface=en0 trace=1"

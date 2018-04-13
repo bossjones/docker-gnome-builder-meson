@@ -15,7 +15,7 @@ export DOCKER_DEVELOPER_CHROOT_FULL_PATH=${HOME}/${DOCKER_DEVELOPER_CHROOT}
 export _HOST_IP=$(ifconfig|grep 'inet '|grep -v '127.0.0.1'| head -1|awk '{print $2}')
 export USERNAME=bossjones
 export CONTAINER_NAME=gnome-builder-meson
-export DISPLAY_MAC=$_HOST_IP:0
+export DISPLAY_MAC=$_HOST_IP:1
 export NON_ROOT_USER_HOME_DIR=/home/${NON_ROOT_USER}
 
 echo "INFO: Stop all running xquartz"
@@ -35,7 +35,7 @@ if [ $? -ne 0 ]; then
 else
   echo "INFO: Bringing up socat"
 
-  socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
+  socat TCP-LISTEN:6001,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
   SOCAT_SCID_PID=$!
 
   docker run \

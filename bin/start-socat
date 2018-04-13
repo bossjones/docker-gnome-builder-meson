@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# NOTE: THIS NEEDS TO RUN BEFORE XQUARTZ STARTS UP
+
+
+if test "$TRACE" = "1"; then set -x; fi
+
+[[ "$BACKROUND" ]] && _BACKGROUND="&" || _BACKGROUND=""
+
+if test "z$1" = "z"; then echo "Please pass in a networking interface name, eg 'en0' "; fi
+
+_INTERFACE=$1
+
+# SOURCE: https://github.com/chanezon/docker-tips/tree/master/x11
+
+export _HOST_IP=$(ifconfig ${_INTERFACE} | grep "inet "| awk '{print $2}')
+export DISPLAY_MAC=$_HOST_IP:1
+
+socat TCP-LISTEN:6001,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY_MAC\" &

@@ -3,22 +3,39 @@
 # NOTE: xstart needs to run before this!!
 # DISPLAY=${_HOST_IP}:0
 
-username=bossjones
-container_name=gnome-builder-meson
+if test "$TRACE" = "1"; then set -x; fi
+
+if test "z$1" = "z"; then echo "Please pass in a networking interface name, eg 'en0' " && exit 1; fi
+
+_INTERFACE=en0
+
+username=scarlettos
+container_name=docker-gnome-builder-meson
 NON_ROOT_USER=developer
 DIR=$(basename $PWD)
-export _HOST_IP=$(ifconfig|grep 'inet '|grep -v '127.0.0.1'| head -1|awk '{print $2}')
-export DISPLAY_MAC=$_HOST_IP:0
+export _HOST_IP=$(ifconfig ${_INTERFACE} | grep "inet "| awk '{print $2}')
+export DISPLAY_MAC=$_HOST_IP:1
+export LC_ALL="en_US.UTF-8"
+export LANG="en_US.UTF-8"
+export LANGUAGE="en_US.UTF-8"
+export C_CTYPE="en_US.UTF-8"
+export LC_NUMERIC=
+export LC_TIME="en_US.UTF-8"
 
 docker run --rm \
     --privileged \
 	-it \
-	--net host \
+	--net=host \
 	-e UID \
 	-e GID \
+	-e LC_ALL \
+	-e LANG \
+	-e C_CTYPE \
+	-e LC_NUMERIC \
+	-e LC_TIME \
 	-e DISPLAY=${DISPLAY_MAC} \
 	-e XAUTHORITY=/tmp/xauth \
-	-v ~/.Xauthority:/tmp/xauth \
+	-v ~/.Xauthority:/tmp/xauth:rw \
 	-v /tmp/.X11-unix:/tmp/.X11-unix \
 	-v /run/user/${UID}/pulse:/run/pulse \
 	\
@@ -27,5 +44,6 @@ docker run --rm \
 	-v /usr/share/themes:/usr/local/share/themes:ro \
 	-v /usr/share/icons:/usr/local/share/icons:ro \
 	-w /home/$NON_ROOT_USER/$DIR \
+	--entrypoint "bash" \
 	\
-	$username/$container_name:latest bash
+	$username/$container_name:latest
