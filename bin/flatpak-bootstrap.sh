@@ -43,6 +43,8 @@ echo "BOSSJONES: Install the Gnome runtimes"
 # Install the Gnome runtimes
 flatpak --user install gnome org.gnome.Platform//3.22
 flatpak --user install gnome org.gnome.Sdk//3.22
+flatpak --user install gnome org.gnome.Platform//3.24
+flatpak --user install gnome org.gnome.Sdk//3.24
 
 echo "BOSSJONES: flatpak remotelist"
 echo "BOSSJONES: flatpak remotelist"

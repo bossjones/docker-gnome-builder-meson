@@ -194,7 +194,7 @@ travis: build
 setup-socat:
 	setup-socat
 
-run-gnome-builder: xstart
+docker-run-bash-osx: xstart
 	docker-run-bash
 
 run-xquartz-proxy:
@@ -244,10 +244,10 @@ run: setup-xhost start-socat start-xquartz
 	$(call check_defined, interface, Please set interface)
 	docker-run-dbus-shell.sh $(interface)
 
+run-gnome-builder: TRACE=1
 run-gnome-builder:
 	$(call check_defined, interface, Please set interface)
-	run-gnome-builder $(interface)
-
+	run-gnome-builder.sh $(interface)
 
 entrypoint-dbus-bash:
 	entrypoint-dbus-bash
@@ -258,3 +258,6 @@ docker-run-dbus-shell:
 
 run-usage:
 	echo "make run interface=en0 trace=1"
+
+flatpak-builder-bash:
+	flatpak run --command=bash --filesystem=host org.gnome.Sdk/x86_64/3.24
