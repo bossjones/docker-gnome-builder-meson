@@ -45,6 +45,8 @@ flatpak --user install gnome org.gnome.Platform//3.22
 flatpak --user install gnome org.gnome.Sdk//3.22
 flatpak --user install gnome org.gnome.Platform//3.24
 flatpak --user install gnome org.gnome.Sdk//3.24
+flatpak --user install gnome org.gnome.Platform//3.28
+flatpak --user install gnome org.gnome.Sdk//3.28
 
 echo "BOSSJONES: flatpak remotelist"
 echo "BOSSJONES: flatpak remotelist"

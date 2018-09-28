@@ -15,13 +15,13 @@ ENV container docker
 
 # LABEL RUN="docker run -it --name NAME --privileged --ipc=host --net=host --pid=host -e HOST=/host -e NAME=NAME -e IMAGE=IMAGE -v /run:/run -v /var/log:/var/log -v /etc/localtime:/etc/localtime -v /:/host IMAGE"
 
-RUN echo "fastestmirror=True" >> /etc/dnf/dnf.conf
-RUN [ -e /etc/yum.conf ] && sed -i '/tsflags=nodocs/d' /etc/yum.conf || true
-
 ARG HOST_USER_ID=1000
 ENV HOST_USER_ID ${HOST_USER_ID}
 ARG HOST_GROUP_ID=1000
 ENV HOST_GROUP_ID ${HOST_GROUP_ID}
+
+RUN echo "fastestmirror=True" >> /etc/dnf/dnf.conf && \
+    [ -e /etc/yum.conf ] && sed -i '/tsflags=nodocs/d' /etc/yum.conf || true
 
 # ENV LANG en_US.utf8
 # RUN locale-gen en_US.UTF-8
@@ -48,6 +48,7 @@ ENV HOST_GROUP_ID ${HOST_GROUP_ID}
 ENV TERM xterm-256color
 
 # INFO: Pyenv requirements
+# SOURCE: https://github.com/alexlarsson/broadway-docker/blob/391325140d8bfeda36d48d51b325b6ad8e689223/build/Dockerfile
 RUN dnf -y update && \
         dnf -y reinstall "*" \
         dnf -y remove vim-minimal && \
@@ -62,10 +63,7 @@ RUN dnf -y update && \
     dnf install -y gcc zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel && \
     dnf install -y zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel xz xz-devel && \
     dnf install -y @development-tools && \
-    dnf reinstall -y glibc-devel.x86_64
-
-RUN dnf -y update && \
-    \
+    dnf reinstall -y glibc-devel.x86_64 && \
     dnf install python3-devel python3-pyOpenSSL.noarch python2-pyOpenSSL.noarch -y; \
     dnf group install "C Development Tools and Libraries" -y; \
     dnf install -y \
@@ -109,78 +107,73 @@ RUN dnf -y update && \
     dnf groupinstall -y development-libs \
                         development-tools \
                         gnome-software-development; \
-    dnf clean all
-
-RUN dnf -y install ninja-build \
-    appstream-devel \
-    autoconf \
-    automake \
-    boost-devel \
-    ctags \
-    ctags-etags \
-    dbus-devel \
-    dbus-x11 \
-    desktop-file-utils \
-    devhelp-devel \
-    devhelp-libs \
-    enchant-devel \
-    file \
-    findutils \
-    flatpak-builder \
-    flatpak-devel \
-    flatpak-libs \
-    elfutils \
-    flex \
-    bison \
-    fpaste \
-    gcc \
-    gcc-c++ \
-    gcc-gfortran \
-    gcc-objc \
-    gcc-objc++ \
-    gdb \
-    gdb-gdbserver \
-    gettext \
-    git-core \
-    gmock-devel \
-    gnustep-base-devel \
-    gspell-devel \
-    gtest-devel \
-    java-devel \
-    json-glib-devel \
-    jsonrpc-glib-devel \
-    libappstream-glib \
-    libappstream-glib-builder-devel \
-    libappstream-glib-devel \
-    libdazzle-devel \
-    libgcc \
-    libgit2-glib-devel \
-    libpeas-devel \
-    libsoup-devel \
-    libsysprof-ui \
-    libxml2-devel \
-    mono-core \
-    mono-devel \
-    procps-ng \
-    psmisc \
-    qt5-qtbase-devel \
-    sudo \
-    sysprof-devel \
-    template-glib-devel \
-    vala \
-    vim \
-    tmux \
-    vte291-devel \
-    webkit2gtk3-devel \
-    wxGTK3-devel \
-    "pkgconfig(protobuf)" \
-    "pkgconfig(glib-2.0)" \
-    "pkgconfig(gobject-introspection-1.0)" \
-    "pkgconfig(zlib)"; \
-    dnf clean all
-
-# SOURCE: https://github.com/alexlarsson/broadway-docker/blob/391325140d8bfeda36d48d51b325b6ad8e689223/build/Dockerfile
-RUN dnf install -y \
+    dnf -y install ninja-build \
+        appstream-devel \
+        autoconf \
+        automake \
+        boost-devel \
+        ctags \
+        ctags-etags \
+        dbus-devel \
+        dbus-x11 \
+        desktop-file-utils \
+        devhelp-devel \
+        devhelp-libs \
+        enchant-devel \
+        file \
+        findutils \
+        flatpak-builder \
+        flatpak-devel \
+        flatpak-libs \
+        elfutils \
+        flex \
+        bison \
+        fpaste \
+        gcc \
+        gcc-c++ \
+        gcc-gfortran \
+        gcc-objc \
+        gcc-objc++ \
+        gdb \
+        gdb-gdbserver \
+        gettext \
+        git-core \
+        gmock-devel \
+        gnustep-base-devel \
+        gspell-devel \
+        gtest-devel \
+        java-devel \
+        json-glib-devel \
+        jsonrpc-glib-devel \
+        libappstream-glib \
+        libappstream-glib-builder-devel \
+        libappstream-glib-devel \
+        libdazzle-devel \
+        libgcc \
+        libgit2-glib-devel \
+        libpeas-devel \
+        libsoup-devel \
+        libsysprof-ui \
+        libxml2-devel \
+        mono-core \
+        mono-devel \
+        procps-ng \
+        psmisc \
+        qt5-qtbase-devel \
+        sudo \
+        sysprof-devel \
+        template-glib-devel \
+        vala \
+        vim \
+        tmux \
+        vte291-devel \
+        webkit2gtk3-devel \
+        wxGTK3-devel \
+        "pkgconfig(protobuf)" \
+        "pkgconfig(glib-2.0)" \
+        "pkgconfig(gobject-introspection-1.0)" \
+        "pkgconfig(zlib)"; \
+        dnf install -y \
         yum-utils \
         rpm-build \
         pixman-devel \
@@ -223,7 +216,12 @@ RUN dnf install -y \
         python3-lxml \
         python3-jedi.noarch \
         python2-jedi \
-        vim-jedi
+        vim-jedi; \
+        dnf remove openssl-devel -y && \
+        dnf install compat-openssl10-devel -y && \
+        dnf install -y ruby-devel.x86_64 \
+                       ruby-libs.x86_64; \
+        dnf clean all
 
 # SOURCE: https://bugzilla.redhat.com/show_bug.cgi?id=1259643
 # Warning: python3-lxml is not installed, no documentation will be available in Python auto-completion
@@ -261,10 +259,12 @@ RUN set -xe \
     && echo 'developer     ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
     && echo '%developer     ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
     && cat /etc/sudoers \
-    && echo 'developer:developer' | chpasswd
-
-RUN mkdir /var/run/dbus && \
+    && echo 'developer:developer' | chpasswd && \
+    mkdir /home/${NON_ROOT_USER}/dev && \
+    mkdir -p /home/${NON_ROOT_USER}/.local/share/fonts && \
     chown developer:developer -Rv /home/developer
+
+RUN mkdir /var/run/dbus
 
 # nvm environment variables
 ENV NVM_DIR /usr/local/nvm
@@ -293,7 +293,7 @@ RUN chown ${NON_ROOT_USER}:${NON_ROOT_USER} -R /usr/local/nvm
 
 # https://github.com/pyenv/pyenv/issues/950
 # SOURCE: https://github.com/pyenv/pyenv/issues/950#issuecomment-348373683
-RUN dnf remove openssl-devel -y && dnf install compat-openssl10-devel -y && dnf install -y ruby-devel.x86_64 ruby-libs.x86_64
+# RUN dnf remove openssl-devel -y && dnf install compat-openssl10-devel -y && dnf install -y ruby-devel.x86_64 ruby-libs.x86_64
 
 # SOURCE: https://docs.docker.com/engine/reference/builder/#copy
 COPY --chown=developer:developer ./ /app
@@ -306,29 +306,26 @@ ENV LANG C.UTF-8
 ENV PYENV_ROOT /home/${NON_ROOT_USER}/.pyenv
 ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${PATH}"
 
-RUN mkdir -p ~/.local/share/fonts
 RUN curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash && \
-    git clone https://github.com/pyenv/pyenv-virtualenvwrapper /home/${NON_ROOT_USER}/.pyenv/plugins/pyenv-virtualenvwrapper && \
-    git clone https://github.com/pyenv/pyenv-pip-rehash /home/${NON_ROOT_USER}/.pyenv/plugins/pyenv-pip-rehash && \
-    git clone https://github.com/pyenv/pyenv-pip-migrate /home/${NON_ROOT_USER}/.pyenv/plugins/pyenv-pip-migrate && \
+    git clone --depth 1 https://github.com/pyenv/pyenv-virtualenvwrapper /home/${NON_ROOT_USER}/.pyenv/plugins/pyenv-virtualenvwrapper && \
+    git clone --depth 1 https://github.com/pyenv/pyenv-pip-rehash /home/${NON_ROOT_USER}/.pyenv/plugins/pyenv-pip-rehash && \
+    git clone --depth 1 https://github.com/pyenv/pyenv-pip-migrate /home/${NON_ROOT_USER}/.pyenv/plugins/pyenv-pip-migrate && \
     pyenv install 3.5.2
 
 # ########################[EDITOR RELATED SETUP STUFF]################################
 
 # # Install rbenv to manage ruby versions
-RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv && \
+RUN git clone --depth 1 https://github.com/rbenv/rbenv.git ~/.rbenv && \
     cd ~/.rbenv && src/configure && make -C src && \
     echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc && \
     echo 'eval "$(rbenv init -)"' >> ~/.bashrc && \
-    git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+    git clone --depth 1 https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
 
 # # Install vim-plug
 # RUN curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 ENV DOTFILE_VERSION feature-font-username
-RUN git clone https://github.com/bossjones/linux-dotfiles.git /home/${NON_ROOT_USER}/.dotfiles; cd /home/${NON_ROOT_USER}/.dotfiles/; git checkout ${DOTFILE_VERSION}
-
-RUN mkdir /home/${NON_ROOT_USER}/dev;
+RUN git clone --depth 1 --branch ${DOTFILE_VERSION} https://github.com/bossjones/linux-dotfiles.git /home/${NON_ROOT_USER}/.dotfiles;
 
 # RUN git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git /home/${NON_ROOT_USER}/dev/nerd-fonts
 
@@ -370,7 +367,9 @@ RUN echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
 RUN echo 'export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"' >> ~/.bashrc
 
 # # Setup virtualenvwrapper overall
-RUN set -x; . /home/$NON_ROOT_USER/.bashrc; pyenv global 3.5.2; pyenv virtualenvwrapper; pip3 install --upgrade pip && \
+RUN set -x; . /home/$NON_ROOT_USER/.bashrc; \
+    pyenv global 3.5.2; pyenv virtualenvwrapper; \
+    pip3 install --upgrade pip && \
     pip install --user neovim jedi mistune psutil setproctitle && \
     pip install gitpython ptpython ipython
 
@@ -380,7 +379,7 @@ RUN set -x; . /home/$NON_ROOT_USER/.bashrc; pyenv global 3.5.2; pyenv virtualenv
 # #     gem install neovim
 
 RUN mkdir -p ~/.local/share/fonts/ && \
-    git clone git://github.com/powerline/fonts.git ~/.config/powerline/fonts && \
+    git clone --depth 1 git://github.com/powerline/fonts.git ~/.config/powerline/fonts && \
     bash ~/.config/powerline/fonts/install.sh && \
     pip install --user powerline-status powerline-gitstatus==1.2.1
 # # ####################################
