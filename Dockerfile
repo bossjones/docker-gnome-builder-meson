@@ -324,7 +324,7 @@ RUN git clone --depth 1 https://github.com/rbenv/rbenv.git ~/.rbenv && \
 # # Install vim-plug
 # RUN curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-ENV DOTFILE_VERSION feature-font-username
+ENV DOTFILE_VERSION master
 RUN git clone --depth 1 --branch ${DOTFILE_VERSION} https://github.com/bossjones/linux-dotfiles.git /home/${NON_ROOT_USER}/.dotfiles;
 
 # RUN git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git /home/${NON_ROOT_USER}/dev/nerd-fonts
